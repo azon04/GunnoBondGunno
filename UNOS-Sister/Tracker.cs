@@ -135,8 +135,16 @@ namespace UNOS_Sister
                 IP = (handler.RemoteEndPoint as IPEndPoint).Address.ToString();
                 PeerID = (handler.RemoteEndPoint as IPEndPoint).Address.ToString();
                 string[] split_res = PeerID.Split('.');
-                PeerID = "P" + split_res[split_res.Length - 1];
-                
+                if (split_res[split_res.Length - 1].Length < 3)
+                {
+                    PeerID = "P";
+                    for (int i = 0; i < 3 - split_res[split_res.Length - 1].Length; i++) PeerID += "0";
+                    PeerID += split_res[split_res.Length - 1];
+                }
+                else
+                {
+                    PeerID = "P" + split_res[split_res.Length - 1];
+                }
 
                 MsgThread = new Thread(RecvrMsgCallback);
                 MsgThread.Start();
@@ -202,6 +210,8 @@ namespace UNOS_Sister
 
                         UNOS_Sister.Message msgResponse = new UNOS_Sister.Message();
                         
+                        // TO DO INITIAL MESSAGE RESPONSE
+                        
                         string log = "";
 
                         msgResponse.msgPeerID = PeerID;
@@ -251,6 +261,7 @@ namespace UNOS_Sister
                                 msg.printMsg();
                                 lock (Tracker.Rooms)
                                 {
+                                    Console.WriteLine("Peer ID :" + msg.Rooms[0].getPeerID());
                                     Tracker.Rooms.Add(msg.Rooms[0].getRoomID(), msg.Rooms.ElementAt(0));
                                 }
                             }
@@ -268,15 +279,33 @@ namespace UNOS_Sister
                         else if (msg.msgCode == Message.JOIN) // Join Room
                         {
                             Console.WriteLine("Join Room");
-                            ClientHandler handlerCreatorPeer = Tracker.ClientHandlers[Tracker.IPPeers[Tracker.Rooms[msg.Rooms[0].getRoomID()].getPeerID()]];
+                            Console.WriteLine("Room ID : " + msg.Rooms[0].getRoomID());
+                            string sRoom = Tracker.Rooms[msg.Rooms[0].getRoomID()].getPeerID();
+                            Console.WriteLine("Peer ID : " + sRoom);
+                            string s = Tracker.IPPeers[sRoom];
+                            Console.WriteLine("Key : " + s);
+                            ClientHandler handlerCreatorPeer = Tracker.ClientHandlers[s];
                             UNOS_Sister.Message msgConfirmation = new UNOS_Sister.Message();
                             msgConfirmation.msgCode = Message.CHECK;
                             msgConfirmation.msgPeerID = msg.msgPeerID;
                             msgResponse.msgCode = handlerCreatorPeer.SentForConfirmation(msgConfirmation.Construct()).msgCode;
+                            if (msgResponse.msgCode == Message.SUCCESS)
+                            {
+                                Console.WriteLine("Sukses");
+                            }
+                            else if (msgResponse.msgCode == Message.FAILED)
+                            {
+                                Console.WriteLine("Failed");
+                            }
+                            else
+                            {
+                                Console.WriteLine("APA ? " + msgResponse.msgCode);
+                                msgResponse.msgCode = Message.FAILED;
+                            }
                         }
 
-                        response.Clear(); 
-                        
+                        response.Clear();
+                        Console.WriteLine("Message to Write : " + msgResponse.msgCode);
                         response.AddRange(msgResponse.Construct());
 
                         if (Tracker.log)

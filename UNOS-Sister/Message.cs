@@ -26,10 +26,11 @@ namespace UNOS_Sister
         public static byte JOIN = 253;
         public static byte START = 252;
         public static byte QUIT = 235;
-        public static byte CHECK = 100; 
+        public static byte CHECK = 100;
+        public static byte NONE = 1;
 
         public Message() { // constructor
-            msgCode = 255;
+            msgCode = 1;
             msgPeerID = "9999";
             Rooms = new List<Room>();
         }
@@ -86,6 +87,7 @@ namespace UNOS_Sister
                     } else if (msgCode == 255) { // message create room
                         msgPeerID = Encoding.ASCII.GetString(SubBytes(iMsg, 20, 4));
                         dummyCreateRoom = new Room();
+                        dummyCreateRoom.setPeerID(SubBytes(iMsg, 20, 4));
                         dummyCreateRoom.setMaxPlayer(iMsg[24]);
                         dummyCreateRoom.setRoomID(SubBytes(iMsg, 25, 50));
                         Rooms.Clear();
@@ -163,16 +165,21 @@ namespace UNOS_Sister
                     tempList.AddRange(Encoding.ASCII.GetBytes(Rooms[i].getPeerID()));
                     tempList.Add((byte)Rooms[i].getMaxPlayer());
                     tempList.AddRange(Encoding.ASCII.GetBytes(Rooms[i].getRoomID()));
+                    int n = 50 - Encoding.ASCII.GetBytes(Rooms[i].getRoomID()).Count();
+                    if (Encoding.ASCII.GetBytes(Rooms[i].getRoomID()).Count() < 50)
+                    {
+                        byte[] byteToAdd = new byte[n];
+                        tempList.AddRange(byteToAdd);
+                    }
                 }
 
             }
             else if (msgCode == 100)
             {
                 tempList.AddRange(Encoding.ASCII.GetBytes(msgPeerID));
-            }
+            } 
 
             return tempList.ToArray();
-
         }
 
     }

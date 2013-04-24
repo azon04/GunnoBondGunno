@@ -15,7 +15,7 @@ namespace UNOS_Sister
 
         public Room() {
             RoomID = Encoding.ASCII.GetBytes("R0001");
-            PeerID = Encoding.ASCII.GetBytes("P0001");
+            PeerID = Encoding.ASCII.GetBytes("P001");
             RoomName = "qwertyuiopqwertyuiopqwertyuiopqwertyuiopqwertyuiop";
             max_player_num = 2;
             Peers = new List<string>();
