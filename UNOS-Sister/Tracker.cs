@@ -14,8 +14,10 @@ namespace UNOS_Sister
     {
         public string IP;
         public Socket Socket;
-        List<ClientHandler> ClientHandlers;
-        List<Room> Rooms;
+        Dictionary<string,ClientHandler> ClientHandlers;
+        Dictionary<string,Room> Rooms;
+        Dictionary<string, string> IPPeers;
+
         Thread ListenThread;
 
         public int max_peer = 10;
@@ -31,7 +33,8 @@ namespace UNOS_Sister
 
         public Tracker()
         {
-            Rooms = new List<Room>();
+            Rooms = new Dictionary<string,Room>();
+            IPPeers = new Dictionary<string, string>();
 
             IPHostEntry ipHostInfo = Dns.Resolve(Dns.GetHostName());
             IPAddress ipAddress = ipHostInfo.AddressList[0];
@@ -45,7 +48,7 @@ namespace UNOS_Sister
             Socket.Bind(localEndPoint);
             Socket.Listen(10);
 
-            ClientHandlers = new List<ClientHandler>();
+            ClientHandlers = new Dictionary<String,ClientHandler>();
             ListenThread = new Thread(Listening);
 
             ListenThread.Start();
@@ -80,7 +83,7 @@ namespace UNOS_Sister
                     // Create Client Handler
                     lock (ClientHandlers)
                     {
-                        ClientHandlers.Add(new ClientHandler(this, handler));
+                        ClientHandlers.Add((handler.RemoteEndPoint as IPEndPoint).Address.ToString(),new ClientHandler(this, handler));
                     }
 
                     Console.WriteLine(ClientHandlers.Count);
@@ -94,7 +97,7 @@ namespace UNOS_Sister
 
         public void Close()
         {
-            foreach (ClientHandler client in ClientHandlers)
+            foreach (ClientHandler client in ClientHandlers.Values)
             {
                 client.Close();
             }
@@ -115,17 +118,21 @@ namespace UNOS_Sister
             Thread MsgThread;
             Tracker Tracker;
             string PeerID;
+            string IP;
 
             int time = 0;
             long LastTime;
             int maxTime = 15000;
 
             private bool running = true;
+            private bool waitConfirmation = false;
+
             public ClientHandler(Tracker tc, Socket handler)
             {
                 this.handler = handler;
                 Tracker = tc;
-                
+
+                IP = (handler.RemoteEndPoint as IPEndPoint).Address.ToString();
                 PeerID = (handler.RemoteEndPoint as IPEndPoint).Address.ToString();
                 string[] split_res = PeerID.Split('.');
                 PeerID = "P" + split_res[split_res.Length - 1];
@@ -136,6 +143,7 @@ namespace UNOS_Sister
 
                 Thread CounterThread = new Thread(Counter);
                 CounterThread.Start();
+                Tracker.IPPeers.Add(PeerID, IP);
             }
 
             private void SendMsg(string msg)
@@ -163,6 +171,7 @@ namespace UNOS_Sister
                
                 while (running)
                 {
+                    while (waitConfirmation) { };
                     try
                     {
 
@@ -173,7 +182,7 @@ namespace UNOS_Sister
                             running = false;
                             lock (Tracker.ClientHandlers)
                             {
-                                Tracker.ClientHandlers.Remove(this);
+                                Tracker.ClientHandlers.Remove(IP);
                             }
                             break;
                         }
@@ -229,7 +238,7 @@ namespace UNOS_Sister
                             log += PeerID + ":" + "Request List of Room\n";
                             msgResponse.msgCode = UNOS_Sister.Message.ROOM;
                             msgResponse.Rooms.Clear();
-                            msgResponse.Rooms.AddRange(Tracker.Rooms);
+                            msgResponse.Rooms.AddRange(Tracker.Rooms.Values);
                         }
                         else if (msg.msgCode == UNOS_Sister.Message.CREATE_ROOM) //Create Room
                         {
@@ -242,7 +251,7 @@ namespace UNOS_Sister
                                 msg.printMsg();
                                 lock (Tracker.Rooms)
                                 {
-                                    Tracker.Rooms.AddRange(msg.Rooms);
+                                    Tracker.Rooms.Add(msg.Rooms[0].getRoomID(), msg.Rooms.ElementAt(0));
                                 }
                             }
                             else
@@ -256,10 +265,14 @@ namespace UNOS_Sister
                                  msg.Rooms[0].getMaxPlayer().ToString()  + "\n";
                             Console.WriteLine(log);
                         }
-                        else if (msg.msgCode == 253) // Join Room
+                        else if (msg.msgCode == Message.JOIN) // Join Room
                         {
                             Console.WriteLine("Join Room");
-                            msgResponse.msgCode = UNOS_Sister.Message.SUCCESS;
+                            ClientHandler handlerCreatorPeer = Tracker.ClientHandlers[Tracker.IPPeers[Tracker.Rooms[msg.Rooms[0].getRoomID()].getPeerID()]];
+                            UNOS_Sister.Message msgConfirmation = new UNOS_Sister.Message();
+                            msgConfirmation.msgCode = Message.CHECK;
+                            msgConfirmation.msgPeerID = msg.msgPeerID;
+                            msgResponse.msgCode = handlerCreatorPeer.SentForConfirmation(msgConfirmation.Construct()).msgCode;
                         }
 
                         response.Clear(); 
@@ -298,13 +311,27 @@ namespace UNOS_Sister
                         running = false;
                         lock (Tracker.ClientHandlers)
                         {
-                            Tracker.ClientHandlers.Remove(this);
+                            Tracker.ClientHandlers.Remove(IP);
                         }
                     }
                 }
             }
 
+            public Message SentForConfirmation(byte[] msg)
+            {
+                waitConfirmation = true;
+                handler.Send(msg);
 
+                byte[] bytes = new byte[1024];
+                int bytesRec = handler.Receive(bytes);
+                time = 0;
+                // Message
+                UNOS_Sister.Message msgConfirm = new UNOS_Sister.Message();
+                msgConfirm.parseMe(bytes);
+                waitConfirmation = false;
+
+                return msgConfirm;
+            }
             public void Close()
             {
                 running = false;

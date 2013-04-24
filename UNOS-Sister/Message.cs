@@ -26,7 +26,8 @@ namespace UNOS_Sister
         public static byte JOIN = 253;
         public static byte START = 252;
         public static byte QUIT = 235;
-        
+        public static byte CHECK = 100; 
+
         public Message() { // constructor
             msgCode = 255;
             msgPeerID = "9999";
@@ -101,6 +102,10 @@ namespace UNOS_Sister
                             Rooms.Add(dummyCreateRoom);
                         }
                     }
+                    else if (msgCode == 100)
+                    {
+                        msgPeerID = Encoding.ASCII.GetString(SubBytes(iMsg, 20, 4));
+                    }
                 }
             } else {
                 Console.WriteLine("Message Tidak Valid");
@@ -160,6 +165,10 @@ namespace UNOS_Sister
                     tempList.AddRange(Encoding.ASCII.GetBytes(Rooms[i].getRoomID()));
                 }
 
+            }
+            else if (msgCode == 100)
+            {
+                tempList.AddRange(Encoding.ASCII.GetBytes(msgPeerID));
             }
 
             return tempList.ToArray();
