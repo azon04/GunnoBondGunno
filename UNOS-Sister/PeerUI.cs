@@ -78,6 +78,23 @@ namespace UNOS_Sister
         private void textBox3_TextChanged(object sender, EventArgs e) {}
         private void textBox4_TextChanged(object sender, EventArgs e) {} //Status Sending
         private void textBox5_TextChanged(object sender, EventArgs e) { } //Status Processing
-        private void richTextBox1_TextChanged(object sender, EventArgs e) {} //Room List 
+        private void richTextBox1_TextChanged(object sender, EventArgs e) {}
+
+        private void PeerUI_Load(object sender, EventArgs e)
+        {
+            comboBox1.SelectedIndex = 0;
+        }
+
+        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (listBox1.SelectedItem != null)
+            {
+                if (listBox1.SelectedItem.ToString().Length != 0)
+                {
+                    Console.WriteLine("Click : " + listBox1.SelectedItem.ToString());
+                    textBox3.Text = listBox1.SelectedItem.ToString();
+                }
+            }
+        }        
     }
 }

@@ -20,6 +20,8 @@ namespace UNOS_Sister
         Queue<byte[]> receivedMsg;
 
         List<Room> roomList;
+        Room myRoom;
+        List<Peer> peerList;
 
         Thread keepAliveThread;
         Thread senderThread;
@@ -29,6 +31,8 @@ namespace UNOS_Sister
         delegate void sendDel();
         delegate void recvDel();
 
+        byte[] roomIDbytes_ = new byte[50];
+
         public Peer(PeerUI peerUI)
         {
             this.peerUI = peerUI;
@@ -36,6 +40,8 @@ namespace UNOS_Sister
             sendMsg = new Queue<byte[]>();
             receivedMsg = new Queue<byte[]>();
             roomList = new List<Room>();
+            peerList = new List<Peer>();
+            myRoom = new Room();
 
             keepAliveThread = new Thread(KeepAlive);
             senderThread = new Thread(sendMessage);
@@ -108,7 +114,6 @@ namespace UNOS_Sister
 
         public void DisconnectFromServer()
         {
-
             connected = false;
             sender.Shutdown(SocketShutdown.Both);
             sender.Close();
@@ -175,7 +180,7 @@ namespace UNOS_Sister
                     roomIDbytes = roomIDbytes.Concat(new byte[50 - roomID.Length]).ToArray();
                 }
                 byteList.AddRange(roomIDbytes);
-
+                roomIDbytes_ = roomIDbytes;
 
                 msg = byteList.ToArray();
                 lock (sendMsg) //add to Queue
@@ -199,7 +204,7 @@ namespace UNOS_Sister
                 byte[] msg = Encoding.ASCII.GetBytes("GunbondGame00000000");
                 List<byte> byteList = new List<byte>();
                 byteList.AddRange(msg);
-                byteList.Add(253); //<create_code>
+                byteList.Add(253); //<join_code>
                 byteList.AddRange(Encoding.ASCII.GetBytes(PeerID)); //<peer_id>
 
                 byte[] roomIDbyte = new byte[50];
@@ -282,13 +287,11 @@ namespace UNOS_Sister
                         {
                             byte[] MsgToBeSent = sendMsg.Dequeue();
                             Console.WriteLine("Sending : " + Encoding.ASCII.GetString(MsgToBeSent));
-                            //peerUI.textBox4.Text = Encoding.ASCII.GetString(MsgToBeSent);
                             sendDel printSendMsg = new sendDel(() =>
                             {
                                 peerUI.textBox4.Text = Encoding.ASCII.GetString(MsgToBeSent);
                             });
                             peerUI.Invoke(printSendMsg);
-
 
                             int byteSent = sender.Send(MsgToBeSent); // kirim ke tracker
 
@@ -314,11 +317,16 @@ namespace UNOS_Sister
                                 {
                                     //create room success 
                                     Console.WriteLine("Create Room Success");
+                                    //masukin ke myRoom
+                                    myRoom = mSent.Rooms[0];
+                                    Console.WriteLine("my Room : " + myRoom.getRoomID());
+                                    peerList.Add(this);
                                 }
                                 else if (mSent.msgCode == Message.JOIN)
                                 {
                                     //join success
                                     Console.WriteLine("Join Room Success");
+                                    //TO DO : koneksi dengan GameConnection
                                 }
                                 else if (mSent.msgCode == Message.KEEP_ALIVE)
                                 {
@@ -336,13 +344,15 @@ namespace UNOS_Sister
                                 roomList.Clear();
                                 roomList.AddRange(m.Rooms);
                                 Console.WriteLine("Room List : ");
+                                List<string> roomString = new List<string>();
                                 del printRoomList = new del(() => {
-                                    peerUI.richTextBox1.Text = "";
+                                    Console.WriteLine("Room List : ");
                                     for (int i = 0; i < roomList.Count; i++)
                                     {
                                         Console.WriteLine(roomList[i].getRoomID());
-                                        peerUI.richTextBox1.Text += "Room " + roomList[i].getRoomID().Substring(0, roomList[i].getRoomID().IndexOf('\0')) +"\n";
+                                        roomString.Add(roomList[i].getRoomID());
                                     }
+                                    peerUI.listBox1.DataSource = roomString;
                                 });
                                 peerUI.Invoke(printRoomList);                                
                             }
@@ -367,6 +377,31 @@ namespace UNOS_Sister
                                 {
                                     //quit success
                                     Console.WriteLine("Quit FAILED");
+                                }
+                            }
+                            else if (m.msgCode == 100) //Check if myRoom masih muat
+                            {
+                                Console.WriteLine("jumlah peer : " + peerList.Count());
+                                Console.WriteLine("max player : " + myRoom.getMaxPlayer());
+                                if (peerList.Count() < myRoom.getMaxPlayer())
+                                {
+                                    Console.WriteLine("Masih bisa join");
+                                    byte[] msg = Encoding.ASCII.GetBytes("GunbondGame00000000");
+                                    List<byte> byteList = new List<byte>();
+                                    byteList.AddRange(msg);
+                                    byteList.Add(Message.SUCCESS);
+                                    msg = byteList.ToArray();
+                                    int byteSent_ = sender.Send(msg);
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Room already full");
+                                    byte[] msg = Encoding.ASCII.GetBytes("GunbondGame00000000");
+                                    List<byte> byteList = new List<byte>();
+                                    byteList.AddRange(msg);
+                                    byteList.Add(Message.FAILED);
+                                    msg = byteList.ToArray();
+                                    int byteSent_ = sender.Send(msg);
                                 }
                             }
 
