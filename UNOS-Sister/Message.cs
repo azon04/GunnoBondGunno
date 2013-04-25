@@ -68,6 +68,10 @@ namespace UNOS_Sister
             }
         }
 
+        /// <summary>
+        /// Parsing byte[] to Message Type
+        /// </summary>
+        /// <param name="iMsg">byte[] message</param>
         public void parseMe(byte[] iMsg) {
             if (validMsg(iMsg))
             {
@@ -134,7 +138,10 @@ namespace UNOS_Sister
             return temp;
         }
 
-
+        /// <summary>
+        /// Construct byte[] from Message type
+        /// </summary>
+        /// <returns>byte[] message</returns>
         public byte[] Construct()
         {
             Console.WriteLine(msgCode.ToString());

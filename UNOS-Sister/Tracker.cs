@@ -12,6 +12,7 @@ namespace UNOS_Sister
 {
     class Tracker
     {
+        #region data member
         public string IP;
         public Socket Socket;
         Dictionary<string,ClientHandler> ClientHandlers;
@@ -30,12 +31,18 @@ namespace UNOS_Sister
         public RichTextBox LogText;
 
         delegate void del(); // declare a delegate
+        #endregion
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public Tracker()
         {
+            // Initialize Data Member
             Rooms = new Dictionary<string,Room>();
             IPPeers = new Dictionary<string, string>();
 
+            // Create ENdPoint
             IPHostEntry ipHostInfo = Dns.Resolve(Dns.GetHostName());
             IPAddress ipAddress = ipHostInfo.AddressList[0];
             Console.WriteLine((IP=ipAddress.ToString()));
@@ -48,11 +55,12 @@ namespace UNOS_Sister
             Socket.Bind(localEndPoint);
             Socket.Listen(10);
 
+            // Listener Thread
             ClientHandlers = new Dictionary<String,ClientHandler>();
             ListenThread = new Thread(Listening);
-
             ListenThread.Start();
 
+            // Log Activity if "log" set true
             if (log)
             {
                 fileLog = new FileStream("log.txt", FileMode.OpenOrCreate, FileAccess.Write);
@@ -61,12 +69,17 @@ namespace UNOS_Sister
             LogText = null;
         }
 
+        /// <summary>
+        /// Deconstructor
+        /// </summary>
         ~Tracker()
         {
             Console.WriteLine("Deconstructor");
-            
         }
 
+        /// <summary>
+        /// Listening Function
+        /// </summary>
         public void Listening()
         {
             while (!shutdown)
@@ -95,6 +108,9 @@ namespace UNOS_Sister
             }
         }
 
+        /// <summary>
+        /// Close the tracker | Close Connection to Peers
+        /// </summary>
         public void Close()
         {
             foreach (ClientHandler client in ClientHandlers.Values)
@@ -106,12 +122,18 @@ namespace UNOS_Sister
             Socket.Close();
         }
 
+        /// <summary>
+        /// Get IP Address
+        /// </summary>
         public string IPAddress
         {
             get {return IP; }
         }
 
         #region ClientHandler
+        /// <summary>
+        /// Handler for Peer from-to Tracker
+        /// </summary>
         class ClientHandler
         {
             Socket handler;
@@ -127,11 +149,17 @@ namespace UNOS_Sister
             private bool running = true;
             private bool waitConfirmation = false;
 
+            /// <summary>
+            /// Constructor of Client Handler
+            /// </summary>
+            /// <param name="tc">Tracker</param>
+            /// <param name="handler">Socket handler</param>
             public ClientHandler(Tracker tc, Socket handler)
             {
                 this.handler = handler;
                 Tracker = tc;
 
+                // Get IP and Peer ID | Peer ID must be 4 length byte
                 IP = (handler.RemoteEndPoint as IPEndPoint).Address.ToString();
                 PeerID = (handler.RemoteEndPoint as IPEndPoint).Address.ToString();
                 string[] split_res = PeerID.Split('.');
@@ -146,14 +174,22 @@ namespace UNOS_Sister
                     PeerID = "P" + split_res[split_res.Length - 1];
                 }
 
+                // Thread for Receving Message from Peer
                 MsgThread = new Thread(RecvrMsgCallback);
                 MsgThread.Start();
 
+                // Thread for timeout
                 Thread CounterThread = new Thread(Counter);
                 CounterThread.Start();
+                
+                // Add PeerID to Dictionary of IP
                 Tracker.IPPeers.Add(PeerID, IP);
             }
 
+            /// <summary>
+            /// Send string message to Peer
+            /// </summary>
+            /// <param name="msg">Message to be sent</param>
             private void SendMsg(string msg)
             {
                 byte[] msgBytes = Encoding.ASCII.GetBytes(msg);
@@ -161,6 +197,9 @@ namespace UNOS_Sister
                 Console.WriteLine("Message Sent");
             }
 
+            /// <summary>
+            /// Counter Function
+            /// </summary>
             private void Counter()
             {
                 LastTime = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
@@ -174,6 +213,9 @@ namespace UNOS_Sister
                 }
             }
 
+            /// <summary>
+            /// Callbacks for Receiving Message from Client and Handle it.
+            /// </summary>
             private void RecvrMsgCallback()
             {
                
@@ -197,7 +239,8 @@ namespace UNOS_Sister
 
                         byte[] bytes = new byte[1024];
                         int bytesRec = handler.Receive(bytes);
-                        time = 0;
+                        time = 0; // time
+
                         // Message
                         UNOS_Sister.Message msg = new UNOS_Sister.Message();
                         msg.parseMe(bytes);
@@ -280,10 +323,15 @@ namespace UNOS_Sister
                         {
                             Console.WriteLine("Join Room");
                             Console.WriteLine("Room ID : " + msg.Rooms[0].getRoomID());
+                           
                             string sRoom = Tracker.Rooms[msg.Rooms[0].getRoomID()].getPeerID();
+                            
                             Console.WriteLine("Peer ID : " + sRoom);
+                            
                             string s = Tracker.IPPeers[sRoom];
+                            
                             Console.WriteLine("Key : " + s);
+                            
                             ClientHandler handlerCreatorPeer = Tracker.ClientHandlers[s];
                             UNOS_Sister.Message msgConfirmation = new UNOS_Sister.Message();
                             msgConfirmation.msgCode = Message.CHECK;
@@ -306,6 +354,7 @@ namespace UNOS_Sister
 
                         response.Clear();
                         Console.WriteLine("Message to Write : " + msgResponse.msgCode);
+                        
                         response.AddRange(msgResponse.Construct());
 
                         if (Tracker.log)
@@ -332,7 +381,7 @@ namespace UNOS_Sister
                             }
                         }
 
-                        //Response
+                        // Send Response
                         handler.Send(response.ToArray());
                     }
                     catch (SocketException se)
@@ -346,6 +395,11 @@ namespace UNOS_Sister
                 }
             }
 
+            /// <summary>
+            /// Send msg and wait for confirmation
+            /// </summary>
+            /// <param name="msg">Bytes to Sent</param>
+            /// <returns>Message Confirmation</returns>
             public Message SentForConfirmation(byte[] msg)
             {
                 waitConfirmation = true;
@@ -361,6 +415,10 @@ namespace UNOS_Sister
 
                 return msgConfirm;
             }
+            
+            /// <summary>
+            /// Close Peer Connection
+            /// </summary>
             public void Close()
             {
                 running = false;
