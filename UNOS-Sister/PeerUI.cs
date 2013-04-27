@@ -95,6 +95,16 @@ namespace UNOS_Sister
                     textBox3.Text = listBox1.SelectedItem.ToString();
                 }
             }
+        }
+
+        private void label8_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox6_TextChanged(object sender, EventArgs e)
+        {
+
         }        
     }
 }
