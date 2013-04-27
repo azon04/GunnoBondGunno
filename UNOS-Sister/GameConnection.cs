@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace UNOS_Sister
 {
-    class GameServer
+    class GameConnection
     {
         public string IP;
         public Socket Socket;
@@ -23,7 +23,7 @@ namespace UNOS_Sister
 
         delegate void del(); // declare a delegate
 
-        public GameServer()
+        public GameConnection()
         {
             IPHostEntry ipHostInfo = Dns.Resolve(Dns.GetHostName());
             IPAddress ipAddress = ipHostInfo.AddressList[0];
@@ -43,7 +43,7 @@ namespace UNOS_Sister
             ListenThread.Start();
         }
 
-        ~GameServer()
+        ~GameConnection()
         {
             Console.WriteLine("Deconstructor");
         }
@@ -97,7 +97,7 @@ namespace UNOS_Sister
         {
             Socket handler;
             Thread MsgThread;
-            GameServer GameServer;
+            GameConnection GameServer;
             string PeerID;
 
             int time = 0;
@@ -105,7 +105,7 @@ namespace UNOS_Sister
             int maxTime = 15000;
 
             private bool running = true;
-            public ClientHandler(GameServer tc, Socket handler)
+            public ClientHandler(GameConnection tc, Socket handler)
             {
                 this.handler = handler;
                 GameServer = tc;
