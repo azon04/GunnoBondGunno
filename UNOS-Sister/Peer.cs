@@ -365,6 +365,7 @@ namespace UNOS_Sister
                                         for (int i = 0; i < peerList.Count; i++)
                                         {
                                             peerUI.richTextBox1.Text += peerList[i];
+                                            peerUI.richTextBox1.Text += "\n";
                                         }
                                         
                                     });
@@ -450,16 +451,19 @@ namespace UNOS_Sister
                                     int byteRecs = sender.Receive(join_msg);
                                     Message m_ = new Message();
                                     m_.parseMe(join_msg);
-                                    if ((m_.msgCode == Message.SUCCESS) && (inRoom == false))
+                                    if (m_.msgCode == Message.SUCCESS) 
                                     {
                                         peerList.Add(m.msgPeerID);
 
                                         //Print Room Member
                                         del printRoomMember = new del(() =>
                                         {
+                                            Console.WriteLine("RoomMember : ");
                                             for (int i = 0; i < peerList.Count; i++)
                                             {
                                                 peerUI.richTextBox1.Text += peerList[i];
+                                                peerUI.richTextBox1.Text += "\n";
+                                                Console.WriteLine(peerList[i]);
                                             }
 
                                         });
@@ -483,12 +487,28 @@ namespace UNOS_Sister
                             }
                             else if (m.msgCode == Message.QUIT) {
                                 peerList.Remove(m.msgPeerID);
+                                Console.WriteLine("Peer " + m.msgPeerID + " quit from your room. Boo!");
                                 byte[] msg = Encoding.ASCII.GetBytes("GunbondGame00000000");
                                 List<byte> byteList = new List<byte>();
                                 byteList.AddRange(msg);
                                 byteList.Add(Message.SUCCESS);
                                 msg = byteList.ToArray();
                                 int byteSent_ = sender.Send(msg);
+
+                                //Print Room Member
+                                del printRoomMember = new del(() =>
+                                {
+                                    Console.WriteLine("RoomMember : ");
+                                    peerUI.richTextBox1.Text = "";
+                                    for (int i = 0; i < peerList.Count; i++)
+                                    {
+                                        peerUI.richTextBox1.Text += peerList[i];
+                                        peerUI.richTextBox1.Text += "\n";
+                                        Console.WriteLine(peerList[i]);
+                                    }
+
+                                });
+                                peerUI.Invoke(printRoomMember);
                             }
                         }
                         catch (SocketException se)
