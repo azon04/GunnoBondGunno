@@ -8,17 +8,17 @@ namespace UNOS_Sister
     class Room
     {
         private byte[] RoomID;
-        private byte[] PeerID;
+        private byte[] PeerID; // ID pemilik
         private string RoomName;
         private int max_player_num;
-        List<string> Peers; // Pemain2 yang ada dalam Room
+        public List<string> PeerIDs; // Pemain2 yang ada dalam Room
 
         public Room() {
             RoomID = Encoding.ASCII.GetBytes("R0001");
             PeerID = Encoding.ASCII.GetBytes("P001");
             RoomName = "qwertyuiopqwertyuiopqwertyuiopqwertyuiopqwertyuiop";
             max_player_num = 2;
-            Peers = new List<string>();
+            PeerIDs = new List<string>();
         }
         
         // setter
@@ -43,7 +43,14 @@ namespace UNOS_Sister
             return Encoding.ASCII.GetString(RoomID); 
         }
         public string getPeerID() {
-            return Encoding.ASCII.GetString(PeerID); 
+            if (PeerIDs.Count > 0)
+            {
+                return PeerIDs[0];
+            }
+            else
+            {
+                return null;
+            }
         }
         public string getRoomName() {
             return RoomName; 
