@@ -121,6 +121,8 @@ namespace UNOS_Sister
             connected = false;
             sender.Shutdown(SocketShutdown.Both);
             sender.Close();
+            peerUI.Close();
+            Console.WriteLine("Disconnect from server");            
         }
 
         public void GetRoomList()
