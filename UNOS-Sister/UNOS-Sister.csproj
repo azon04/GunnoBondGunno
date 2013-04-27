@@ -34,8 +34,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="GameClient.cs" />
-    <Compile Include="GameServer.cs" />
+    <Compile Include="GameConnection.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="Peer.cs" />
     <Compile Include="PeerUI.cs">

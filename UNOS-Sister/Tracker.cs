@@ -288,34 +288,32 @@ namespace UNOS_Sister
                             if (found)
                             {
                                 Console.WriteLine("QUIT");
-                                room.PeerIDs.Remove(msg.msgPeerID);
-                                if (room.PeerIDs.Count == 0) Tracker.Rooms.Remove(room.getRoomID());
                                 string sRoom = room.getPeerID();
-                                if (sRoom != null)
+                                Console.WriteLine("Peer ID : " + sRoom);
+
+                                string s = Tracker.IPPeers[sRoom];
+
+                                Console.WriteLine("Key : " + s);
+
+                                ClientHandler handlerCreatorPeer = Tracker.ClientHandlers[s];
+                                UNOS_Sister.Message msgConfirmation = msg;
+                                msgResponse.msgCode = handlerCreatorPeer.SentForConfirmation(msgConfirmation.Construct()).msgCode;
+                                if (msgResponse.msgCode == Message.SUCCESS)
                                 {
-                                    Console.WriteLine("Peer ID : " + sRoom);
-
-                                    string s = Tracker.IPPeers[sRoom];
-
-                                    Console.WriteLine("Key : " + s);
-
-                                    ClientHandler handlerCreatorPeer = Tracker.ClientHandlers[s];
-                                    UNOS_Sister.Message msgConfirmation = msg;
-                                    msgResponse.msgCode = handlerCreatorPeer.SentForConfirmation(msgConfirmation.Construct()).msgCode;
-                                    if (msgResponse.msgCode == Message.SUCCESS)
-                                    {
-                                        Console.WriteLine("Sukses");
-                                    }
-                                    else if (msgResponse.msgCode == Message.FAILED)
-                                    {
-                                        Console.WriteLine("Failed");
-                                    }
-                                    else
-                                    {
-                                        Console.WriteLine("APA ? " + msgResponse.msgCode);
-                                        msgResponse.msgCode = Message.FAILED;
-                                    }
+                                    Console.WriteLine("Sukses");
+                                    room.PeerIDs.Remove(msg.msgPeerID);
+                                    if (room.PeerIDs.Count == 0) Tracker.Rooms.Remove(room.getRoomID());
                                 }
+                                else if (msgResponse.msgCode == Message.FAILED)
+                                {
+                                    Console.WriteLine("Failed");
+                                }
+                                else
+                                {
+                                    Console.WriteLine("APA ? " + msgResponse.msgCode);
+                                    msgResponse.msgCode = Message.FAILED;
+                                }
+
                             }
                             else
                                 msgResponse.msgCode = UNOS_Sister.Message.FAILED;
@@ -489,5 +487,5 @@ namespace UNOS_Sister
         }
         #endregion
     }
-    
+
 }
