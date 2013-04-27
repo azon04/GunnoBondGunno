@@ -21,7 +21,7 @@ namespace UNOS_Sister
 
         List<Room> roomList;
         Room myRoom;
-        List<Peer> peerList;
+        List<String> peerList;
 
         Thread keepAliveThread;
         Thread senderThread;
@@ -33,6 +33,10 @@ namespace UNOS_Sister
 
         byte[] roomIDbytes_ = new byte[50];
 
+        Boolean inRoom = false;
+        Boolean canQuit = true;
+        String joininRoom = "";
+
         public Peer(PeerUI peerUI)
         {
             this.peerUI = peerUI;
@@ -40,7 +44,7 @@ namespace UNOS_Sister
             sendMsg = new Queue<byte[]>();
             receivedMsg = new Queue<byte[]>();
             roomList = new List<Room>();
-            peerList = new List<Peer>();
+            peerList = new List<String>();
             myRoom = new Room();
 
             keepAliveThread = new Thread(KeepAlive);
@@ -146,46 +150,53 @@ namespace UNOS_Sister
         {
             if (connected == true)
             {
-                //<pstr><reserved><create_ code><peer_id><max_ player_num><room_id>
-                byte[] bytes = new byte[1024];
-                byte[] msg = Encoding.ASCII.GetBytes("GunbondGame00000000");
-                List<byte> byteList = new List<byte>();
-                byteList.AddRange(msg);
-                byteList.Add(255); //<create_code>
-                byteList.AddRange(Encoding.ASCII.GetBytes(PeerID)); //<peer_id>
+                if (inRoom == false)
+                {
+                    //<pstr><reserved><create_ code><peer_id><max_ player_num><room_id>
+                    byte[] bytes = new byte[1024];
+                    byte[] msg = Encoding.ASCII.GetBytes("GunbondGame00000000");
+                    List<byte> byteList = new List<byte>();
+                    byteList.AddRange(msg);
+                    byteList.Add(255); //<create_code>
+                    byteList.AddRange(Encoding.ASCII.GetBytes(PeerID)); //<peer_id>
 
-                //<max_player_num>
-                if (max_player == "2 Player")
-                {
-                    byteList.Add(2);
-                }
-                else if (max_player == "4 Player")
-                {
-                    byteList.Add(4);
-                }
-                else if (max_player == "6 Player")
-                {
-                    byteList.Add(6);
-                }
-                else if (max_player == "8 Player")
-                {
-                    byteList.Add(8);
-                }
+                    //<max_player_num>
+                    if (max_player == "2 Player")
+                    {
+                        byteList.Add(2);
+                    }
+                    else if (max_player == "4 Player")
+                    {
+                        byteList.Add(4);
+                    }
+                    else if (max_player == "6 Player")
+                    {
+                        byteList.Add(6);
+                    }
+                    else if (max_player == "8 Player")
+                    {
+                        byteList.Add(8);
+                    }
 
-                //<room_id>
-                byte[] roomIDbytes = new byte[50];
-                roomIDbytes = Encoding.ASCII.GetBytes(roomID);
-                if (50 - roomID.Length > 0)
-                {
-                    roomIDbytes = roomIDbytes.Concat(new byte[50 - roomID.Length]).ToArray();
-                }
-                byteList.AddRange(roomIDbytes);
-                roomIDbytes_ = roomIDbytes;
+                    //<room_id>
+                    byte[] roomIDbytes = new byte[50];
+                    roomIDbytes = Encoding.ASCII.GetBytes(roomID);
+                    if (50 - roomID.Length > 0)
+                    {
+                        roomIDbytes = roomIDbytes.Concat(new byte[50 - roomID.Length]).ToArray();
+                    }
+                    byteList.AddRange(roomIDbytes);
+                    roomIDbytes_ = roomIDbytes;
 
-                msg = byteList.ToArray();
-                lock (sendMsg) //add to Queue
+                    msg = byteList.ToArray();
+                    lock (sendMsg) //add to Queue
+                    {
+                        sendMsg.Enqueue(msg);
+                    }
+                }
+                else
                 {
-                    sendMsg.Enqueue(msg);
+                    Console.WriteLine("Can't create room. You are currently joining another ROOM");
                 }
             }
             else
@@ -196,6 +207,7 @@ namespace UNOS_Sister
 
         public void joinRoom(string room_id)
         {
+            joininRoom = room_id;
             if (connected == true)
             {
 
@@ -213,7 +225,7 @@ namespace UNOS_Sister
                 {
                     roomIDbyte = roomIDbyte.Concat(new byte[50 - room_id.Length]).ToArray();
                 }
-            
+                
                 byteList.AddRange(roomIDbyte); //<room_id>
                 msg = byteList.ToArray();
                 lock (sendMsg) //add to Queue
@@ -231,18 +243,24 @@ namespace UNOS_Sister
         {
             if (connected == true)
             {
-
-                //<pstr><reserved><quit_code><peer_id>
-                byte[] bytes = new byte[1024];
-                byte[] msg = Encoding.ASCII.GetBytes("GunbondGame00000000");
-                List<byte> byteList = new List<byte>();
-                byteList.AddRange(msg);
-                byteList.Add(235); //<quit_code>
-                byteList.AddRange(Encoding.ASCII.GetBytes(PeerID)); //<peer_id>
-                msg = byteList.ToArray();
-                lock (sendMsg) //add to Queue
+                if (canQuit == true)
                 {
-                    sendMsg.Enqueue(msg);
+                    //<pstr><reserved><quit_code><peer_id>
+                    byte[] bytes = new byte[1024];
+                    byte[] msg = Encoding.ASCII.GetBytes("GunbondGame00000000");
+                    List<byte> byteList = new List<byte>();
+                    byteList.AddRange(msg);
+                    byteList.Add(235); //<quit_code>
+                    byteList.AddRange(Encoding.ASCII.GetBytes(PeerID)); //<peer_id>
+                    msg = byteList.ToArray();
+                    lock (sendMsg) //add to Queue
+                    {
+                        sendMsg.Enqueue(msg);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Creator Peer can not quit room. HAHA sukurin!");
                 }
             }
             else
@@ -319,12 +337,28 @@ namespace UNOS_Sister
                                     Console.WriteLine("Create Room Success");
                                     //masukin ke myRoom
                                     myRoom = mSent.Rooms[0];
+                                    inRoom = true; //masuk ke room yang di create
+                                    canQuit = false;
                                     Console.WriteLine("my Room : " + myRoom.getRoomID());
-                                    peerList.Add(this);
+                                    peerList.Add(this.PeerID);
+
+                                    sendDel printCurrentRoom = new sendDel(() =>
+                                    {
+                                        peerUI.textBox6.Text = myRoom.getRoomID();
+                                    });
+                                    peerUI.Invoke(printCurrentRoom);
                                 }
                                 else if (mSent.msgCode == Message.JOIN)
                                 {
                                     //join success
+                                    inRoom = true;
+                                    
+                                    sendDel printCurrentRoom = new sendDel(() =>
+                                    {
+                                        peerUI.textBox6.Text = joininRoom;
+                                    });
+                                    peerUI.Invoke(printCurrentRoom);
+
                                     Console.WriteLine("Join Room Success");
                                     //TO DO : koneksi dengan GameConnection
                                 }
@@ -334,8 +368,15 @@ namespace UNOS_Sister
                                     Console.WriteLine("Keep Alive Success");
                                 }
                                 else if (mSent.msgCode == Message.QUIT)
-                                {
+                                {                                    
+                                    
                                     //quit success
+                                    inRoom = false;
+                                    sendDel printCurrentRoom = new sendDel(() =>
+                                    {
+                                        peerUI.textBox6.Text = "-";
+                                    });
+                                    peerUI.Invoke(printCurrentRoom);
                                     Console.WriteLine("Quit Success");
                                 }
                             }
@@ -380,7 +421,7 @@ namespace UNOS_Sister
                                 }
                             }
                             else if (m.msgCode == 100) //Check if myRoom masih muat
-                            {
+                            {                                
                                 Console.WriteLine("jumlah peer : " + peerList.Count());
                                 Console.WriteLine("max player : " + myRoom.getMaxPlayer());
                                 if (peerList.Count() < myRoom.getMaxPlayer())
@@ -392,6 +433,21 @@ namespace UNOS_Sister
                                     byteList.Add(Message.SUCCESS);
                                     msg = byteList.ToArray();
                                     int byteSent_ = sender.Send(msg);
+
+                                    //Receive response from tracker
+                                    byte[] join_msg = new byte[1024];
+                                    int byteRecs = sender.Receive(join_msg);
+                                    Message m_ = new Message();
+                                    m_.parseMe(join_msg);
+                                    if ((m_.msgCode == Message.SUCCESS) && (inRoom == false))
+                                    {
+                                        peerList.Add(m.msgPeerID);
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("Sudah join room lain");
+                                    }
+
                                 }
                                 else
                                 {
@@ -403,6 +459,15 @@ namespace UNOS_Sister
                                     msg = byteList.ToArray();
                                     int byteSent_ = sender.Send(msg);
                                 }
+                            }
+                            else if (m.msgCode == Message.QUIT) {
+                                peerList.Remove(m.msgPeerID);
+                                byte[] msg = Encoding.ASCII.GetBytes("GunbondGame00000000");
+                                List<byte> byteList = new List<byte>();
+                                byteList.AddRange(msg);
+                                byteList.Add(Message.SUCCESS);
+                                msg = byteList.ToArray();
+                                int byteSent_ = sender.Send(msg);
                             }
 
                             //Console.WriteLine("Processing : " + Encoding.ASCII.GetString(msg));
