@@ -359,6 +359,17 @@ namespace UNOS_Sister
                                     });
                                     peerUI.Invoke(printCurrentRoom);
 
+                                    //Print Room Member
+                                    del printRoomMember = new del(() =>
+                                    {
+                                        for (int i = 0; i < peerList.Count; i++)
+                                        {
+                                            peerUI.richTextBox1.Text += peerList[i];
+                                        }
+                                        
+                                    });
+                                    peerUI.Invoke(printRoomMember);  
+
                                     Console.WriteLine("Join Room Success");
                                     //TO DO : koneksi dengan GameConnection
                                 }
@@ -442,12 +453,22 @@ namespace UNOS_Sister
                                     if ((m_.msgCode == Message.SUCCESS) && (inRoom == false))
                                     {
                                         peerList.Add(m.msgPeerID);
+
+                                        //Print Room Member
+                                        del printRoomMember = new del(() =>
+                                        {
+                                            for (int i = 0; i < peerList.Count; i++)
+                                            {
+                                                peerUI.richTextBox1.Text += peerList[i];
+                                            }
+
+                                        });
+                                        peerUI.Invoke(printRoomMember);
                                     }
                                     else
                                     {
                                         Console.WriteLine("Sudah join room lain");
                                     }
-
                                 }
                                 else
                                 {
@@ -469,13 +490,6 @@ namespace UNOS_Sister
                                 msg = byteList.ToArray();
                                 int byteSent_ = sender.Send(msg);
                             }
-
-                            //Console.WriteLine("Processing : " + Encoding.ASCII.GetString(msg));
-                            /*
-                            lock (receivedMsg)
-                            {
-                                receivedMsg.Enqueue(bytes);
-                            }*/
                         }
                         catch (SocketException se)
                         {
@@ -504,12 +518,6 @@ namespace UNOS_Sister
                     {
                         byte[] msg = receivedMsg.Dequeue();
                         Console.WriteLine("Processing : " + Encoding.ASCII.GetString(msg));
-                        //peerUI.textBox5.Text = Encoding.ASCII.GetString(msg);
-
-                        //List Room
-                        //<pstr><reserved><room_code><room_count><room><room>.....<room>
-
-                        //
                     }
                 }
             }

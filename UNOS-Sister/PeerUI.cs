@@ -105,6 +105,11 @@ namespace UNOS_Sister
         private void textBox6_TextChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void richTextBox1_TextChanged_1(object sender, EventArgs e)
+        {
+
         }        
     }
 }

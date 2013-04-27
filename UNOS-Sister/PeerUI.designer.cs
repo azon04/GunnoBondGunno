@@ -55,6 +55,8 @@
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.label8 = new System.Windows.Forms.Label();
             this.textBox6 = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -330,11 +332,31 @@
             this.textBox6.TabIndex = 18;
             this.textBox6.TextChanged += new System.EventHandler(this.textBox6_TextChanged);
             // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(405, 50);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(76, 13);
+            this.label9.TabIndex = 19;
+            this.label9.Text = "Room Member";
+            // 
+            // richTextBox1
+            // 
+            this.richTextBox1.Location = new System.Drawing.Point(488, 50);
+            this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.Size = new System.Drawing.Size(115, 60);
+            this.richTextBox1.TabIndex = 20;
+            this.richTextBox1.Text = "";
+            this.richTextBox1.TextChanged += new System.EventHandler(this.richTextBox1_TextChanged_1);
+            // 
             // PeerUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(625, 402);
+            this.Controls.Add(this.richTextBox1);
+            this.Controls.Add(this.label9);
             this.Controls.Add(this.textBox6);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.listBox1);
@@ -390,5 +412,7 @@
         public System.Windows.Forms.ListBox listBox1;
         private System.Windows.Forms.Label label8;
         public System.Windows.Forms.TextBox textBox6;
+        private System.Windows.Forms.Label label9;
+        public System.Windows.Forms.RichTextBox richTextBox1;
     }
 }
