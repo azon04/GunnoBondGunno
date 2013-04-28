@@ -92,12 +92,28 @@ namespace UNOS_Sister
             get { return IP; }
         }
 
+        public void SendMessage(String msg)
+        {
+            if (ClientHandlers.Count > 0)
+            {
+                ClientHandlers[0].SendMsg(msg);
+            }
+        }
+
+        public void BroadCastMessage (String msg)
+        {
+            foreach (ClientHandler handler in ClientHandlers)
+            {
+                handler.SendMsg(msg);
+            }
+        }
+
         #region ClientHandler
         class ClientHandler
         {
             Socket handler;
             Thread MsgThread;
-            GameConnection GameServer;
+            GameConnection GameConnection;
             string PeerID;
 
             int time = 0;
@@ -108,7 +124,7 @@ namespace UNOS_Sister
             public ClientHandler(GameConnection tc, Socket handler)
             {
                 this.handler = handler;
-                GameServer = tc;
+                GameConnection = tc;
 
                 PeerID = (handler.RemoteEndPoint as IPEndPoint).Address.ToString();
                 string[] split_res = PeerID.Split('.');
@@ -121,7 +137,7 @@ namespace UNOS_Sister
                 CounterThread.Start();
             }
 
-            private void SendMsg(string msg)
+            public void SendMsg(string msg)
             {
                 byte[] msgBytes = Encoding.ASCII.GetBytes(msg);
                 handler.Send(msgBytes);
@@ -138,6 +154,17 @@ namespace UNOS_Sister
                     time += (int)(NowTime - LastTime);
 
                     LastTime = NowTime;
+
+                    if (time >= maxTime)
+                    {
+                        Close();
+                        running = false;
+                        lock (GameConnection.ClientHandlers)
+                        {
+                            GameConnection.ClientHandlers.Remove(this);
+                        }
+                        break;
+                    }
                 }
             }
 
@@ -147,65 +174,27 @@ namespace UNOS_Sister
                 {
                     try
                     {
-                        Console.WriteLine(time);
-                        if (time >= maxTime)
-                        {
-                            Close();
-                            running = false;
-                            lock (GameServer.ClientHandlers)
-                            {
-                                GameServer.ClientHandlers.Remove(this);
-                            }
-                            break;
-                        }
-
                         byte[] bytes = new byte[1024];
                         int bytesRec = handler.Receive(bytes);
                         time = 0;
+
                         // Message
                         Console.WriteLine(bytes[bytes.Length - 1]);
                         Console.WriteLine("Message : {0}", Encoding.ASCII.GetString(bytes, 0, bytesRec));
 
                         string response = "OK";
-                        string log = "";
 
-                        // Message Handling
-                        if (bytes[19] == 135)
-                        {
-                            response = PeerID;
-                            log += "Handshake from " + (handler.RemoteEndPoint as IPEndPoint).Address.ToString() +
-                                ", Peer ID : " + PeerID + "\n";
-                        }
-                        else if (bytes[19] == 235)
-                        {
-
-                        }
-                        else if (bytes[19] == 182)
-                        {
-                            response = "OK, I will not kill you this time";
-                            log += PeerID + ":" + "Still Alive\n";
-                            time = 0;
-                        }
-                        else if (bytes[19] == 254)
-                        {
-                            response = "Oke list of room will be sent sooon";
-                            log += PeerID + ":" + "Request List of Room\n";
-                        }
-                        else if (bytes[19] == 255)
-                        {
-                            // Create Room
-                            response = "Oke Room will be created";
-                            log += PeerID + ":" + "Created Room ID : X , MaxPlayer : 10\n";
-                        }
+                        // Message Handling Here
+                       
                         //Response
                         SendMsg(response);
                     }
                     catch (SocketException se)
                     {
                         running = false;
-                        lock (GameServer.ClientHandlers)
+                        lock (GameConnection.ClientHandlers)
                         {
-                            GameServer.ClientHandlers.Remove(this);
+                            GameConnection.ClientHandlers.Remove(this);
                         }
                     }
                 }
