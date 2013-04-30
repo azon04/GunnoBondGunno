@@ -22,6 +22,8 @@ namespace GunBond
             AssetsList.Add("orang2", Content.Load<Texture2D>("orang2"));
             AssetsList.Add("orang3", Content.Load<Texture2D>("orang3"));
             AssetsList.Add("orang4", Content.Load<Texture2D>("orang4"));
+            AssetsList.Add("pointer", Content.Load<Texture2D>("pointer"));
+            AssetsList.Add("bullet", Content.Load<Texture2D>("bullet"));
             AssetsList.Add("background", Content.Load<Texture2D>("background"));
         }
     }
