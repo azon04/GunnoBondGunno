@@ -12,6 +12,7 @@ namespace UNOS_Sister
 {
     class GameConnection
     {
+        public List<string> IPTable;
         public string IP;
         public Socket Socket;
         List<ClientHandler> ClientHandlers;
@@ -39,8 +40,10 @@ namespace UNOS_Sister
 
             ClientHandlers = new List<ClientHandler>();
             ListenThread = new Thread(Listening);
+            IPTable = new List<string>();
 
             ListenThread.Start();
+
         }
 
         ~GameConnection()
@@ -74,6 +77,29 @@ namespace UNOS_Sister
 
                 }
             }
+        }
+
+        public void Connect(string IP)
+        {
+            try
+            {
+                IPHostEntry ipHostInfo = Dns.Resolve(Dns.GetHostName());
+                IPAddress ipAddress = System.Net.IPAddress.Parse(IP);
+                IPEndPoint remoteEP = new IPEndPoint(ipAddress, 11000);
+
+                //Create TCP/IP socket
+                Socket handler = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
+                lock (ClientHandlers)
+                {
+                    ClientHandlers.Add(new ClientHandler(this, handler));
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+
         }
 
         public void Close()
