@@ -22,7 +22,8 @@ namespace GunBond
         private bool Fire;
 
         // constructor
-        public Player() {
+        public Player()
+        {
             peerID = "";
             position = new Vector2();
             angle = 90.0f;
@@ -41,19 +42,23 @@ namespace GunBond
 
         // getter
 
-        public string getPeerID() {
+        public string getPeerID()
+        {
             return peerID;
         }
 
-        public Vector2 getPosition() {
+        public Vector2 getPosition()
+        {
             return position;
         }
 
-        public float getAngle() {
+        public float getAngle()
+        {
             return angle;
         }
 
-        public int getHealthPoint() {
+        public int getHealthPoint()
+        {
             return healthPoint;
         }
 
@@ -85,7 +90,8 @@ namespace GunBond
         }
 
         // update & draw
-        protected override void update(GameTime gameTime) {
+        protected override void update(GameTime gameTime)
+        {
             // keyboard state
             KeyboardState keys = Keyboard.GetState();
 
@@ -99,8 +105,9 @@ namespace GunBond
 
         }
 
-        protected override void draw(SpriteBatch spriteBatch) { 
-            
+        protected override void draw(SpriteBatch spriteBatch)
+        {
+
         }
 
     }
