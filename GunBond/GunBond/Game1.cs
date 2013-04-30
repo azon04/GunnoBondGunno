@@ -23,6 +23,7 @@ namespace GunBond
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            
         }
 
         /// <summary>
@@ -34,6 +35,7 @@ namespace GunBond
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+            AssetsManager.Initialize();
 
             base.Initialize();
         }
@@ -48,6 +50,7 @@ namespace GunBond
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
+            AssetsManager.LoadContent(Content);
         }
 
         /// <summary>
@@ -57,6 +60,7 @@ namespace GunBond
         protected override void UnloadContent()
         {
             // TODO: Unload any non ContentManager content here
+            Content.Unload();
         }
 
         /// <summary>
