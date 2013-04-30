@@ -18,7 +18,11 @@ namespace GunBond
 
         public static void LoadContent(ContentManager Content)
         {
-
+            AssetsList.Add("orang1", Content.Load<Texture2D>("orang1"));
+            AssetsList.Add("orang2", Content.Load<Texture2D>("orang2"));
+            AssetsList.Add("orang3", Content.Load<Texture2D>("orang3"));
+            AssetsList.Add("orang4", Content.Load<Texture2D>("orang4"));
+            AssetsList.Add("background", Content.Load<Texture2D>("background"));
         }
     }
 }
