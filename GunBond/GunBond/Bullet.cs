@@ -81,15 +81,15 @@ namespace GunBond
 
         public override void Update(GameTime gameTime)
         {
-            position += (V * gameTime.ElapsedGameTime.Milliseconds/1000);
-            V += (A * gameTime.ElapsedGameTime.Milliseconds/1000); 
+            position += (V * gameTime.ElapsedGameTime.Milliseconds/150f);
+            V += (A * gameTime.ElapsedGameTime.Milliseconds/150f); 
             base.Update(gameTime);
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Begin();
-            spriteBatch.Draw(image, new Rectangle((int)(position.X),(int)(position.Y),5,5), null, Color.White);
+            spriteBatch.Draw(image, new Rectangle((int)(position.X),(int)(position.Y),image.Width,image.Height), null, Color.White);
             spriteBatch.End();
         }
     }
