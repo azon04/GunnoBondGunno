@@ -80,6 +80,18 @@ namespace GunBond
             set { A = value;  }
         }
 
+        public void isColide (Player p)
+        {
+            Boolean isColiding = false;
+            Rectangle bulletRect = new Rectangle((int)position.X, (int)position.Y, image.Width, image.Height);
+            Rectangle playerRect = new Rectangle((int)p.getPosition().X, (int)p.getPosition().Y, 100,100);
+            if (bulletRect.Intersects(playerRect))
+            {
+                p.setHealthPoint(p.getHealthPoint() - 20);
+                game.Bullets.Remove(this);
+            }
+        }
+
         public override void Update(GameTime gameTime)
         {
             position += (V * gameTime.ElapsedGameTime.Milliseconds/150f);
