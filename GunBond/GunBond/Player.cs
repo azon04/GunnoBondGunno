@@ -12,7 +12,7 @@ using Microsoft.Xna.Framework.Media;
 
 namespace GunBond
 {
-    class Player
+    public class Player
     {
         // atribut
         private string peerID;
@@ -90,7 +90,7 @@ namespace GunBond
         }
 
         // update & draw
-        protected override void update(GameTime gameTime)
+        public void update(GameTime gameTime)
         {
             // keyboard state
             KeyboardState keys = Keyboard.GetState();
@@ -105,7 +105,7 @@ namespace GunBond
 
         }
 
-        protected override void draw(SpriteBatch spriteBatch)
+        public void draw(SpriteBatch spriteBatch)
         {
 
         }

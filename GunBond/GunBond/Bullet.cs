@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace GunBond
 {
-    class Bullet : Microsoft.Xna.Framework.DrawableGameComponent
+    public class Bullet : Microsoft.Xna.Framework.DrawableGameComponent
     {
         Vector2 position;
         Texture2D image;

@@ -18,15 +18,19 @@ namespace GunBond
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        public static Game1 GameObject;
 
         // Bullet in Game
         public List<Bullet> Bullets;
+        public Dictionary<string, Player> Players;
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            Bullets = new List<Bullet>();    
+            Bullets = new List<Bullet>();
+            Players = new Dictionary<string, Player>();
+            GameObject = this;
         }
 
         /// <summary>
@@ -40,6 +44,8 @@ namespace GunBond
             // TODO: Add your initialization logic here
             AssetsManager.Initialize();
 
+            graphics.PreferredBackBufferWidth = 900;
+            graphics.PreferredBackBufferHeight = 540;
             base.Initialize();
         }
 
@@ -93,6 +99,7 @@ namespace GunBond
             // TODO: Add your drawing code here
             spriteBatch.Begin();
             spriteBatch.Draw(AssetsManager.AssetsList["background"], Vector2.Zero, Color.White);
+            spriteBatch.DrawString(AssetsManager.FontList["default"], "AKU KAMU DAN MEREKA", Vector2.Zero, Color.White);
             spriteBatch.End();
 
             base.Draw(gameTime);

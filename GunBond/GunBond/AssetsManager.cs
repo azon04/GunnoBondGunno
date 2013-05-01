@@ -10,10 +10,12 @@ namespace GunBond
     class AssetsManager
     {
         public static Dictionary<string, Texture2D> AssetsList;
-        
+        public static Dictionary<string, SpriteFont> FontList;
+
         public static void Initialize()
         {
             AssetsList = new Dictionary<string, Texture2D>();
+            FontList = new Dictionary<string, SpriteFont>();
         }
 
         public static void LoadContent(ContentManager Content)
@@ -25,6 +27,8 @@ namespace GunBond
             AssetsList.Add("pointer", Content.Load<Texture2D>("pointer"));
             AssetsList.Add("bullet", Content.Load<Texture2D>("bullet"));
             AssetsList.Add("background", Content.Load<Texture2D>("background"));
+
+            FontList.Add("default", Content.Load<SpriteFont>("defaultFont"));
         }
     }
 }
