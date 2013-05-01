@@ -21,23 +21,48 @@ namespace GunBond
         private int healthPoint;
         private bool Fire;
 
+        // Enum jenis player (buat nentuin texture player)
+        public enum jenisPlayer { player1, player2, player3, player4 };
+        public jenisPlayer currentPlayer;
+
+        // Texture player
+        Texture2D playerTexture;
+
+        // Rectangle tempat naroh player
+        Rectangle playerRectangle;
+
+        // Current player dipake buat nentuin update posisi player atau angle player
+        bool isCurrentPlayer;
+
         // constructor
         public Player()
         {
+            // assign nilai default atribut
             peerID = "";
             position = new Vector2();
             angle = 90.0f;
             healthPoint = 100;
             Fire = false;
+
+            // randomize jenis player (dari segi texture)
+            Array jenis = Enum.GetValues(typeof(jenisPlayer));
+            Random random = new Random();
+            currentPlayer = (jenisPlayer) jenis.GetValue(random.Next(jenis.Length));
         }
 
         public Player(string _ID, Vector2 _position)
         {
+            // assign nilai atribut dengan input dan nilai default
             peerID = _ID;
             position = _position;
             angle = 90.0f;
             healthPoint = 100;
             Fire = false;
+
+            // randomize jenis player (dari segi texture)
+            Array jenis = Enum.GetValues(typeof(jenisPlayer));
+            Random random = new Random();
+            currentPlayer = (jenisPlayer)jenis.GetValue(random.Next(jenis.Length));
         }
 
         // getter
@@ -63,27 +88,32 @@ namespace GunBond
         }
 
         // setter
-        public void getPeerID(string _ID)
+        public void setPeerID(string _ID)
         {
             peerID = _ID;
         }
 
-        public void getPosition(Vector2 pos)
+        public void setPosition(Vector2 pos)
         {
             position = pos;
         }
 
-        public void getAngle(float _Angle)
+        public void setAngle(float _Angle)
         {
             angle = _Angle;
         }
 
-        public void getHealthPoint(int _HP)
+        public void setHealthPoint(int _HP)
         {
             healthPoint = _HP;
         }
 
-        // method lain = isFire()
+        // method lain { getIsCurrentPlayer(), isFire() }
+        public bool getIsCurrentPlayer()
+        {
+            return isCurrentPlayer;
+        }
+        
         public bool isFire()
         {
             return Fire;
@@ -96,19 +126,21 @@ namespace GunBond
             KeyboardState keys = Keyboard.GetState();
 
             // geser player
-            if (keys.IsKeyDown(Keys.A)) { position.X = position.X - 1; }
-            if (keys.IsKeyDown(Keys.D)) { position.X = position.X + 1; }
+            if (keys.IsKeyDown(Keys.A) && isCurrentPlayer == true) { position.X = position.X - 1; }
+            if (keys.IsKeyDown(Keys.D) && isCurrentPlayer == true) { position.X = position.X + 1; }
 
             // ubah angle
-            if (keys.IsKeyDown(Keys.W)) { angle = angle + 0.1f; }
-            if (keys.IsKeyDown(Keys.S)) { angle = angle - 0.1f; }
+            if (keys.IsKeyDown(Keys.W) && isCurrentPlayer == true) { angle = angle + 0.1f; }
+            if (keys.IsKeyDown(Keys.S) && isCurrentPlayer == true) { angle = angle - 0.1f; }
 
         }
 
         public void draw(SpriteBatch spriteBatch)
         {
-
+            if (currentPlayer == jenisPlayer.player1) { playerTexture = AssetsManager.AssetsList["orang1"]; }
+            if (currentPlayer == jenisPlayer.player2) { playerTexture = AssetsManager.AssetsList["orang2"]; }
+            if (currentPlayer == jenisPlayer.player3) { playerTexture = AssetsManager.AssetsList["orang3"]; }
+            if (currentPlayer == jenisPlayer.player4) { playerTexture = AssetsManager.AssetsList["orang4"]; }
         }
-
     }
 }
