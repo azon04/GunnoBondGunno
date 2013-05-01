@@ -63,6 +63,7 @@ namespace GunBond
             // TODO: use this.Content to load your game content here
             AssetsManager.LoadContent(Content);
             Bullets.Add(new Bullet(this, Vector2.Zero, new Vector2(10, 0), 0f, new Vector2(0, 10)));
+            Players.Add("AAA",new Player("AAA",new Vector2(100,100)));
         }
 
         /// <summary>
@@ -92,6 +93,11 @@ namespace GunBond
                 bullet.Update(gameTime);
             }
 
+            foreach (Player player in Players.Values)
+            {
+                player.update(gameTime);
+            }
+
             base.Update(gameTime);
         }
 
@@ -115,6 +121,11 @@ namespace GunBond
             foreach (Bullet bullet in RemoveBullets)
             {
                 Bullets.Remove(bullet);
+            }
+
+            foreach (Player player in Players.Values)
+            {
+                player.draw(spriteBatch);
             }
 
             spriteBatch.End();

@@ -32,7 +32,7 @@ namespace GunBond
         Rectangle playerRectangle;
 
         // Current player dipake buat nentuin update posisi player atau angle player
-        bool isCurrentPlayer;
+        bool isCurrentPlayer = false;
 
         // constructor
         public Player()
@@ -151,12 +151,12 @@ namespace GunBond
 
         public void draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Begin();
+            //spriteBatch.Begin();
 
-            spriteBatch.DrawString(AssetsManager.FontList["default"], peerID, Vector2.Zero, Color.White);
-            spriteBatch.Draw(playerTexture, Vector2.Zero, Color.White);
+            spriteBatch.DrawString(AssetsManager.FontList["default"], peerID, position, Color.White);
+            spriteBatch.Draw(playerTexture, position, Color.White);
             
-            spriteBatch.End();
+            //spriteBatch.End();
 
         }
     }
