@@ -12,7 +12,8 @@ namespace GunBond
         Vector2 position;
         Texture2D image;
         Vector2 V0, V, A;
-        float sudut; 
+        float sudut;
+        Game1 game; 
 
         public Bullet(Game game, Bullet bullet) : base(game)
         {
@@ -33,10 +34,10 @@ namespace GunBond
             A = new Vector2();
         }
 
-        public Bullet(Game game, Vector2 Position, Texture2D Image, Vector2 v_nol, float Sudut, Vector2 a) : base(game)
+        public Bullet(Game game, Vector2 Position, Vector2 v_nol, float Sudut, Vector2 a) : base(game)
         {
             position = Position;
-            image = Image;
+            image = AssetsManager.AssetsList["bullet"];
             V0 = v_nol;
             sudut = Sudut;
             A = a;
@@ -82,7 +83,11 @@ namespace GunBond
         public override void Update(GameTime gameTime)
         {
             position += (V * gameTime.ElapsedGameTime.Milliseconds/150f);
-            V += (A * gameTime.ElapsedGameTime.Milliseconds/150f); 
+            V += (A * gameTime.ElapsedGameTime.Milliseconds/150f);
+            if (position.Y == (540 - image.Height))
+            {
+                game.Bullets.Remove(this);
+            }
             base.Update(gameTime);
         }
 
