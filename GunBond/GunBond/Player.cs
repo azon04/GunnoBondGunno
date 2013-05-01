@@ -87,6 +87,11 @@ namespace GunBond
             return healthPoint;
         }
 
+        public bool getIsCurrentPlayer()
+        {
+            return isCurrentPlayer;
+        }
+        
         // setter
         public void setPeerID(string _ID)
         {
@@ -108,12 +113,12 @@ namespace GunBond
             healthPoint = _HP;
         }
 
-        // method lain { getIsCurrentPlayer(), isFire() }
-        public bool getIsCurrentPlayer()
+        public void setIsCurrentPlayer(bool curr)
         {
-            return isCurrentPlayer;
+            isCurrentPlayer = curr;
         }
-        
+
+        // method lain { getIsCurrentPlayer(), isFire() }
         public bool isFire()
         {
             return Fire;
@@ -124,7 +129,10 @@ namespace GunBond
         {
             // keyboard state
             KeyboardState keys = Keyboard.GetState();
-
+            
+            // firing state true
+            if (keys.IsKeyDown(Keys.Space) && isCurrentPlayer == true) { Fire = true; }
+            
             // geser player
             if (keys.IsKeyDown(Keys.A) && isCurrentPlayer == true) { position.X = position.X - 1; }
             if (keys.IsKeyDown(Keys.D) && isCurrentPlayer == true) { position.X = position.X + 1; }
@@ -133,14 +141,23 @@ namespace GunBond
             if (keys.IsKeyDown(Keys.W) && isCurrentPlayer == true) { angle = angle + 0.1f; }
             if (keys.IsKeyDown(Keys.S) && isCurrentPlayer == true) { angle = angle - 0.1f; }
 
-        }
-
-        public void draw(SpriteBatch spriteBatch)
-        {
+            // ubah Texture player berdasarkan hasil randomize
             if (currentPlayer == jenisPlayer.player1) { playerTexture = AssetsManager.AssetsList["orang1"]; }
             if (currentPlayer == jenisPlayer.player2) { playerTexture = AssetsManager.AssetsList["orang2"]; }
             if (currentPlayer == jenisPlayer.player3) { playerTexture = AssetsManager.AssetsList["orang3"]; }
             if (currentPlayer == jenisPlayer.player4) { playerTexture = AssetsManager.AssetsList["orang4"]; }
+
+        }
+
+        public void draw(SpriteBatch spriteBatch)
+        {
+            spriteBatch.Begin();
+
+            spriteBatch.DrawString(AssetsManager.FontList["default"], peerID, Vector2.Zero, Color.White);
+            spriteBatch.Draw(playerTexture, Vector2.Zero, Color.White);
+            
+            spriteBatch.End();
+
         }
     }
 }
