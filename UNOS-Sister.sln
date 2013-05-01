@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual C# Express 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UNOS-Sister", "UNOS-Sister\UNOS-Sister.csproj", "{2AB708A9-F988-4718-B1B1-14FF82843A54}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GunBond", "GunBond\GunBond\GunBond.csproj", "{3A57EA18-63F3-46F3-939D-005B54978CB3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GunBond", "GunBond\GunBond\GunBond.csproj", "{77D21F18-68D9-4AF7-9907-81A9073202F9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GunBondContent", "GunBond\GunBondContent\GunBondContent.contentproj", "{DA21B48A-9957-41B0-8052-63F03244D91B}"
 EndProject
@@ -17,10 +17,10 @@ Global
 		{2AB708A9-F988-4718-B1B1-14FF82843A54}.Debug|x86.Build.0 = Debug|x86
 		{2AB708A9-F988-4718-B1B1-14FF82843A54}.Release|x86.ActiveCfg = Release|x86
 		{2AB708A9-F988-4718-B1B1-14FF82843A54}.Release|x86.Build.0 = Release|x86
-		{3A57EA18-63F3-46F3-939D-005B54978CB3}.Debug|x86.ActiveCfg = Debug|x86
-		{3A57EA18-63F3-46F3-939D-005B54978CB3}.Debug|x86.Build.0 = Debug|x86
-		{3A57EA18-63F3-46F3-939D-005B54978CB3}.Release|x86.ActiveCfg = Release|x86
-		{3A57EA18-63F3-46F3-939D-005B54978CB3}.Release|x86.Build.0 = Release|x86
+		{77D21F18-68D9-4AF7-9907-81A9073202F9}.Debug|x86.ActiveCfg = Debug|x86
+		{77D21F18-68D9-4AF7-9907-81A9073202F9}.Debug|x86.Build.0 = Debug|x86
+		{77D21F18-68D9-4AF7-9907-81A9073202F9}.Release|x86.ActiveCfg = Release|x86
+		{77D21F18-68D9-4AF7-9907-81A9073202F9}.Release|x86.Build.0 = Release|x86
 		{DA21B48A-9957-41B0-8052-63F03244D91B}.Debug|x86.ActiveCfg = Debug|x86
 		{DA21B48A-9957-41B0-8052-63F03244D91B}.Release|x86.ActiveCfg = Release|x86
 	EndGlobalSection

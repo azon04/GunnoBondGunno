@@ -19,11 +19,14 @@ namespace GunBond
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
+        // Bullet in Game
+        public List<Bullet> Bullets;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            
+            Bullets = new List<Bullet>();    
         }
 
         /// <summary>
@@ -88,6 +91,9 @@ namespace GunBond
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // TODO: Add your drawing code here
+            spriteBatch.Begin();
+            spriteBatch.Draw(AssetsManager.AssetsList["background"], Vector2.Zero, Color.White);
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }
