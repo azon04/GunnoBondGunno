@@ -43,6 +43,7 @@ namespace GunBond
             A = a;
             V.X = V0.X * (float) Math.Cos(Sudut);
             V.Y = V0.Y * (float) Math.Sin(Sudut);
+            this.game = game as Game1;
         }
 
         public override void Initialize()
@@ -96,18 +97,16 @@ namespace GunBond
         {
             position += (V * gameTime.ElapsedGameTime.Milliseconds/150f);
             V += (A * gameTime.ElapsedGameTime.Milliseconds/150f);
-            if (position.Y == (540 - image.Height))
+            if (position.Y >= (540 - image.Height))
             {
-                game.Bullets.Remove(this);
+                game.RemoveBullets.Add(this);
             }
             base.Update(gameTime);
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Begin();
             spriteBatch.Draw(image, new Rectangle((int)(position.X),(int)(position.Y),image.Width,image.Height), null, Color.White);
-            spriteBatch.End();
-        }
+         }
     }
 }

@@ -23,6 +23,7 @@ namespace GunBond
         // Bullet in Game
         public List<Bullet> Bullets;
         public Dictionary<string, Player> Players;
+        public List<Bullet> RemoveBullets;
 
         public Game1()
         {
@@ -30,6 +31,7 @@ namespace GunBond
             Content.RootDirectory = "Content";
             Bullets = new List<Bullet>();
             Players = new Dictionary<string, Player>();
+            RemoveBullets = new List<Bullet>();
             GameObject = this;
         }
 
@@ -60,6 +62,7 @@ namespace GunBond
 
             // TODO: use this.Content to load your game content here
             AssetsManager.LoadContent(Content);
+            Bullets.Add(new Bullet(this, Vector2.Zero, new Vector2(10, 0), 0f, new Vector2(0, 10)));
         }
 
         /// <summary>
@@ -84,6 +87,10 @@ namespace GunBond
                 this.Exit();
 
             // TODO: Add your update logic here
+            foreach (Bullet bullet in Bullets)
+            {
+                bullet.Update(gameTime);
+            }
 
             base.Update(gameTime);
         }
@@ -100,6 +107,16 @@ namespace GunBond
             spriteBatch.Begin();
             spriteBatch.Draw(AssetsManager.AssetsList["background"], Vector2.Zero, Color.White);
             spriteBatch.DrawString(AssetsManager.FontList["default"], "AKU KAMU DAN MEREKA", Vector2.Zero, Color.White);
+            foreach (Bullet bullet in Bullets)
+            {
+                bullet.Draw(spriteBatch);
+            }
+
+            foreach (Bullet bullet in RemoveBullets)
+            {
+                Bullets.Remove(bullet);
+            }
+
             spriteBatch.End();
 
             base.Draw(gameTime);
