@@ -20,6 +20,7 @@ namespace GunBond
         private float angle;
         private int healthPoint;
         private bool Fire;
+        private int orientation; //0 = left, 1 = right
 
         // Enum jenis player (buat nentuin texture player)
         public enum jenisPlayer { player1, player2, player3, player4 };
@@ -32,7 +33,7 @@ namespace GunBond
         Rectangle playerRectangle;
 
         // Current player dipake buat nentuin update posisi player atau angle player
-        bool isCurrentPlayer = false;
+        bool isCurrentPlayer = true;
 
         // constructor
         public Player()
@@ -43,6 +44,7 @@ namespace GunBond
             angle = 90.0f;
             healthPoint = 100;
             Fire = false;
+            orientation = 0;
 
             // randomize jenis player (dari segi texture)
             Array jenis = Enum.GetValues(typeof(jenisPlayer));
@@ -58,6 +60,7 @@ namespace GunBond
             angle = 90.0f;
             healthPoint = 100;
             Fire = false;
+            orientation = 0;
 
             // randomize jenis player (dari segi texture)
             Array jenis = Enum.GetValues(typeof(jenisPlayer));
@@ -66,6 +69,9 @@ namespace GunBond
         }
 
         // getter
+        public int getOrientation () {
+            return orientation;
+        }
 
         public string getPeerID()
         {
@@ -124,6 +130,11 @@ namespace GunBond
             return Fire;
         }
 
+        public void setFire(bool f)
+        {
+            Fire = f; 
+        }
+
         // update & draw
         public void update(GameTime gameTime)
         {
@@ -131,11 +142,27 @@ namespace GunBond
             KeyboardState keys = Keyboard.GetState();
             
             // firing state true
-            if (keys.IsKeyDown(Keys.Space) && isCurrentPlayer == true) { Fire = true; }
+            if (keys.IsKeyDown(Keys.Space) && isCurrentPlayer == true && !Fire) { 
+                Fire = true; 
+                if (this.getOrientation() == 1) //hadap kanan
+                {
+                    Game1.GameObject.Bullets.Add(new Bullet(Game1.GameObject, position, new Vector2(60, -50), (float)Math.PI / 4, new Vector2(0, 10)));
+                }
+                else //hadap kiri
+                {
+                    Game1.GameObject.Bullets.Add(new Bullet(Game1.GameObject, position, new Vector2(-60, -50), (float)Math.PI / 4, new Vector2(0, 10)));
+                }
+            }
             
             // geser player
-            if (keys.IsKeyDown(Keys.A) && isCurrentPlayer == true) { position.X = position.X - 1; }
-            if (keys.IsKeyDown(Keys.D) && isCurrentPlayer == true) { position.X = position.X + 1; }
+            if (keys.IsKeyDown(Keys.A) && isCurrentPlayer == true) { 
+                position.X = position.X - 1;
+                orientation = 0;
+            }
+            if (keys.IsKeyDown(Keys.D) && isCurrentPlayer == true) { 
+                position.X = position.X + 1;
+                orientation = 1;
+            }
 
             // ubah angle
             if (keys.IsKeyDown(Keys.W) && isCurrentPlayer == true) { angle = angle + 0.1f; }
@@ -146,7 +173,6 @@ namespace GunBond
             if (currentPlayer == jenisPlayer.player2) { playerTexture = AssetsManager.AssetsList["orang2"]; }
             if (currentPlayer == jenisPlayer.player3) { playerTexture = AssetsManager.AssetsList["orang3"]; }
             if (currentPlayer == jenisPlayer.player4) { playerTexture = AssetsManager.AssetsList["orang4"]; }
-
         }
 
         public void draw(SpriteBatch spriteBatch)
@@ -154,7 +180,16 @@ namespace GunBond
             //spriteBatch.Begin();
 
             spriteBatch.DrawString(AssetsManager.FontList["default"], peerID, position, Color.White);
-            spriteBatch.Draw(playerTexture, position, Color.White);
+            if (orientation == 1) //hadap kanan
+            {
+                Rectangle s = new Rectangle((int) position.X, (int) position.Y, playerTexture.Width, playerTexture.Height);
+                Rectangle r = new Rectangle(0,0, playerTexture.Width, playerTexture.Height);
+                spriteBatch.Draw(playerTexture, s, r, Color.White, 0.0f, new Vector2(0, 0), SpriteEffects.FlipHorizontally, 0);
+            }
+            else
+            {
+                spriteBatch.Draw(playerTexture, position, Color.White);
+            }
             
             //spriteBatch.End();
 
