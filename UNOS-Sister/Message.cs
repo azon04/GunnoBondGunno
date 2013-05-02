@@ -10,6 +10,7 @@ namespace UNOS_Sister
     class Message
     {
         private string msgDefault = "GunbondGame00000000";
+        public string IP;
         public byte msgCode; // 1 Byte type message
         public string msgPeerID; // 4 byte ID peer, contoh P001
         private Room dummyCreateRoom; // dummy Create Room message
@@ -111,6 +112,7 @@ namespace UNOS_Sister
                     else if (msgCode == 100)
                     {
                         msgPeerID = Encoding.ASCII.GetString(SubBytes(iMsg, 20, 4));
+                        IP = Encoding.ASCII.GetString(SubBytes(iMsg,5,iMsg.Count()-5));
                     }
                 }
             } else {
@@ -184,6 +186,7 @@ namespace UNOS_Sister
             else if (msgCode == 100)
             {
                 tempList.AddRange(Encoding.ASCII.GetBytes(msgPeerID));
+                tempList.AddRange(Encoding.ASCII.GetBytes(IP));
             } 
 
             return tempList.ToArray();
