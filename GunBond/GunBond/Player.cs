@@ -29,9 +29,6 @@ namespace GunBond
         // Texture player
         Texture2D playerTexture;
 
-        // Rectangle tempat naroh player
-        Rectangle playerRectangle;
-
         // Current player dipake buat nentuin update posisi player atau angle player
         bool isCurrentPlayer = true;
 
@@ -41,7 +38,7 @@ namespace GunBond
             // assign nilai default atribut
             peerID = "";
             position = new Vector2();
-            angle = 90.0f;
+            angle = 0.0f;
             healthPoint = 100;
             Fire = false;
             orientation = 0;
@@ -57,7 +54,7 @@ namespace GunBond
             // assign nilai atribut dengan input dan nilai default
             peerID = _ID;
             position = _position;
-            angle = 90.0f;
+            angle = 0.0f;
             healthPoint = 100;
             Fire = false;
             orientation = 0;
@@ -155,18 +152,49 @@ namespace GunBond
             }
             
             // geser player
-            if (keys.IsKeyDown(Keys.A) && isCurrentPlayer == true) { 
+            if (keys.IsKeyDown(Keys.A) && isCurrentPlayer == true && position.X > 0 && Fire == false)
+            { // kalo belum keluar screen sebelah kiri
                 position.X = position.X - 1;
                 orientation = 0;
+                
+                if (angle > 1.67f) 
+                {
+                    angle = 3.14f - angle;
+                }
             }
-            if (keys.IsKeyDown(Keys.D) && isCurrentPlayer == true) { 
+            else if (keys.IsKeyDown(Keys.A) && isCurrentPlayer == true && position.X <= 0 && Fire == false)
+            {
+                orientation = 0; // kalo udah keluar screen dia cuma ganti orientasi (?)
+                
+                if (angle > 1.67f)
+                {
+                    angle = 3.14f - angle;
+                }
+            }
+
+            if (keys.IsKeyDown(Keys.D) && isCurrentPlayer == true && position.X < Game1.GameObject.GraphicsDevice.Viewport.Width - 100 && Fire == false)
+            { // kalo belum keluar screen sebelah kanan
                 position.X = position.X + 1;
                 orientation = 1;
+                
+                if (angle > 1.67f)
+                {
+                    angle = 3.14f - angle;
+                }
+            }
+            else if (keys.IsKeyDown(Keys.D) && isCurrentPlayer == true && position.X >= Game1.GameObject.GraphicsDevice.Viewport.Width - 100 && Fire == false)
+            {
+                orientation = 1; // kalo udah keluar screen dia cuma ganti orientasi (?)
+
+                if (angle > 1.67f)
+                {
+                    angle = 3.14f - angle;
+                }
             }
 
             // ubah angle
-            if (keys.IsKeyDown(Keys.W) && isCurrentPlayer == true) { angle = angle + 0.1f; }
-            if (keys.IsKeyDown(Keys.S) && isCurrentPlayer == true) { angle = angle - 0.1f; }
+            if (keys.IsKeyDown(Keys.W) && isCurrentPlayer == true && angle < 3.14f) { angle = angle + 0.1f; }
+            if (keys.IsKeyDown(Keys.S) && isCurrentPlayer == true && angle > 0.0f) { angle = angle - 0.1f; }
 
             // ubah Texture player berdasarkan hasil randomize
             if (currentPlayer == jenisPlayer.player1) { playerTexture = AssetsManager.AssetsList["orang1"]; }
@@ -180,17 +208,38 @@ namespace GunBond
             //spriteBatch.Begin();
 
             spriteBatch.DrawString(AssetsManager.FontList["default"], peerID, position, Color.White);
+            
             if (orientation == 1) //hadap kanan
             {
-                Rectangle s = new Rectangle((int) position.X, (int) position.Y, playerTexture.Width, playerTexture.Height);
-                Rectangle r = new Rectangle(0,0, playerTexture.Width, playerTexture.Height);
-                spriteBatch.Draw(playerTexture, s, r, Color.White, 0.0f, new Vector2(0, 0), SpriteEffects.FlipHorizontally, 0);
+                Rectangle s = new Rectangle((int)position.X + playerTexture.Width / 2, (int)position.Y + playerTexture.Height / 2, playerTexture.Width, playerTexture.Height);
+                Rectangle r = new Rectangle(0, 0, playerTexture.Width, playerTexture.Height);
+
+                if (angle <= 1.67f)
+                {
+                    spriteBatch.Draw(playerTexture, s, r, Color.White, -angle, new Vector2(playerTexture.Width / 2, playerTexture.Height / 2), SpriteEffects.FlipHorizontally, 0);
+                }
+                else 
+                {
+                    spriteBatch.Draw(playerTexture, s, r, Color.White, 3.14f - angle, new Vector2(playerTexture.Width / 2, playerTexture.Height / 2), SpriteEffects.None, 0);
+                }
+
+                
             }
             else
             {
-                spriteBatch.Draw(playerTexture, position, Color.White);
+                Rectangle s = new Rectangle((int)position.X + playerTexture.Width / 2, (int)position.Y + playerTexture.Height / 2, playerTexture.Width, playerTexture.Height);
+                Rectangle r = new Rectangle(0, 0, playerTexture.Width, playerTexture.Height);
+
+                if (angle <= 1.67f)
+                {
+                    spriteBatch.Draw(playerTexture, s, r, Color.White, angle, new Vector2(playerTexture.Width / 2, playerTexture.Height / 2), SpriteEffects.None, 0);
+                }
+                else 
+                {
+                    spriteBatch.Draw(playerTexture, s, r, Color.White, -(3.14f - angle), new Vector2(playerTexture.Width / 2, playerTexture.Height / 2), SpriteEffects.FlipHorizontally, 0);
+                }
+                
             }
-            
             //spriteBatch.End();
 
         }
