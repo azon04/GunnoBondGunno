@@ -130,6 +130,20 @@ namespace UNOS_Sister
             get { return IP; }
         }
 
+        public Room GetRoom(string PeerID)
+        {
+            Room rRes = null;
+            foreach (Room room in Rooms.Values)
+            {
+                if (room.getPeerID().Equals(PeerID))
+                {
+                    rRes = room;
+                    break;
+                }
+            }
+            return rRes;
+        }
+
         #region ClientHandler
         /// <summary>
         /// Handler for Peer from-to Tracker
@@ -321,7 +335,21 @@ namespace UNOS_Sister
                         }
                         else if (msg.msgCode == UNOS_Sister.Message.START) // Start Room
                         {
-                            msgResponse.msgCode = UNOS_Sister.Message.SUCCESS;
+                            Room sRoom = Tracker.GetRoom(msg.msgPeerID);
+                            if (sRoom != null)
+                            {
+                                msgResponse.msgCode = UNOS_Sister.Message.SUCCESS;
+                                foreach (string id in sRoom.PeerIDs)
+                                {
+                                    if (!id.Equals(msg.msgPeerID))
+                                    {
+                                        Tracker.ClientHandlers[id].handler.Send(msg.Construct());
+                                    }
+                                }
+                            } else {
+                                msgResponse.msgCode = UNOS_Sister.Message.FAILED;
+                            
+                            }
                             Console.WriteLine("Start Room");
                         }
                         else if (msg.msgCode == UNOS_Sister.Message.KEEP_ALIVE) // Keep Alive 
