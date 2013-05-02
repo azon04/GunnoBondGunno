@@ -9,6 +9,7 @@ namespace GunBond.Connection
     {
         public enum State { start, starting, done };
 
+        public State Status = State.start; 
         List<string> IPTable;
         string IP;
         string tag = "GundBond";
@@ -86,6 +87,11 @@ namespace GunBond.Connection
         public void Parse(byte[] bytes) {
             string s = Encoding.ASCII.GetString(bytes);
             string[] sres = s.Split(',');
+            IPTable.Clear();
+            for (int i = 1; i < sres.Count(); i++)
+            {
+                IPTable.Add(sres[i]);
+            }
         }
     }
 }

@@ -66,6 +66,7 @@
     <Reference Include="Microsoft.Xna.Framework.GamerServices, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
     <Reference Include="mscorlib" />
     <Reference Include="System" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -74,6 +75,8 @@
   <ItemGroup>
     <Compile Include="AssetsManager.cs" />
     <Compile Include="Bullet.cs" />
+    <Compile Include="Connection\Configurator.cs" />
+    <Compile Include="Connection\GameConnection.cs" />
     <Compile Include="Connection\Message.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -87,6 +90,10 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\UNOS-Sister\UNOS-Sister.csproj">
+      <Project>{2AB708A9-F988-4718-B1B1-14FF82843A54}</Project>
+      <Name>UNOS-Sister</Name>
+    </ProjectReference>
     <ProjectReference Include="..\GunBondContent\GunBondContent.contentproj">
       <Name>GunBondContent</Name>
       <XnaReferenceType>Content</XnaReferenceType>

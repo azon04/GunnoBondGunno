@@ -5,7 +5,7 @@ using System.Text;
 
 namespace UNOS_Sister
 {
-    class Room
+    public class Room
     {
         private byte[] RoomID;
         private byte[] PeerID; // ID pemilik

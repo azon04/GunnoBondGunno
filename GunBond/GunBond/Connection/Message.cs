@@ -97,35 +97,35 @@ namespace GunBond.Connection
             tempList.AddRange(Encoding.ASCII.GetBytes(PeerID));
             tempList.Add(msgCode);
 
-            if (msgCode == 0) {
-                tempList.Add(POS);
-                tempList.AddRange(Encoding.ASCII.GetBytes("" + playerPos.X + "," + playerPos.Y + "|"));
-                tempList.AddRange(Encoding.ASCII.GetBytes(playerRot.ToString() + "|"));
-                tempList.AddRange(Encoding.ASCII.GetBytes(playerOrt));
-            } else if (msgCode == 1) {
-                tempList.Add(KEEP_ALIVE);
-                tempList.AddRange(Encoding.ASCII.GetBytes(HP));
-            } else if (msgCode == 2) {
-                tempList.Add(FIRE);
+            //if (msgCode == 0) {
+            //    tempList.Add(POS);
+            //    tempList.AddRange(Encoding.ASCII.GetBytes("" + playerPos.X + "," + playerPos.Y + "|"));
+            //    tempList.AddRange(Encoding.ASCII.GetBytes(playerRot.ToString() + "|"));
+            //    tempList.AddRange(Encoding.ASCII.GetBytes(playerOrt));
+            //} else if (msgCode == 1) {
+            //    tempList.Add(KEEP_ALIVE);
+            //    tempList.AddRange(Encoding.ASCII.GetBytes(HP));
+            //} else if (msgCode == 2) {
+            //    tempList.Add(FIRE);
 
-                /*
-                //skenario1
-                tempList.AddRange(Encoding.ASCII.GetBytes(bulletV0)); //ambil jadi string
-                tempList.AddRange(Encoding.ASCII.GetBytes(playerRot));
-                 */
+            //    /*
+            //    //skenario1
+            //    tempList.AddRange(Encoding.ASCII.GetBytes(bulletV0)); //ambil jadi string
+            //    tempList.AddRange(Encoding.ASCII.GetBytes(playerRot));
+            //     */
 
                 
-                //skenario2
-                tempList.AddRange(Encoding.ASCII.GetBytes(elapsedTime));
+            //    //skenario2
+            //    tempList.AddRange(Encoding.ASCII.GetBytes(elapsedTime));
                 
-                /*
-                //skenario3
-                tempList.AddRange(Encoding.ASCII.GetBytes(bulletPos)); //
-                 */
-            } else if(msgCode == 3) {
-                tempList.Add(Encoding.ASCII.GetBytes(NEXT_PLAYER));
-                tempList.AddRange(Encoding.ASCII.GetBytes(nextPlayer));
-            }
+            //    /*
+            //    //skenario3
+            //    tempList.AddRange(Encoding.ASCII.GetBytes(bulletPos)); //
+            //     */
+            //} else if(msgCode == 3) {
+            //    tempList.Add(Encoding.ASCII.GetBytes(NEXT_PLAYER));
+            //    tempList.AddRange(Encoding.ASCII.GetBytes(nextPlayer));
+            //}
 
             return tempList.ToArray();
         }

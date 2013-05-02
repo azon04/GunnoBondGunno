@@ -1,4 +1,6 @@
 using System;
+using UNOS_Sister;
+using System.Windows.Forms;
 
 namespace GunBond
 {
@@ -10,6 +12,9 @@ namespace GunBond
         /// </summary>
         static void Main(string[] args)
         {
+            PeerUI peer = new PeerUI();
+            peer.ShowDialog();
+            
             using (Game1 game = new Game1())
             {
                 game.Run();
