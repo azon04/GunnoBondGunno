@@ -170,7 +170,7 @@ namespace GunBond
             { // kalo belum keluar screen sebelah kiri
                 position.X = position.X - 1;
                 orientation = 0;
-                if (angle < 1.67) 
+                if (angle < 1.67f) 
                 {
                     angle = 3.14f - angle;
                 }
@@ -178,7 +178,7 @@ namespace GunBond
             else if (keys.IsKeyDown(Keys.A) && isCurrentPlayer == true && position.X <= 0 && Fire == false)
             {
                 orientation = 0; // kalo udah keluar screen dia cuma ganti orientasi (?)
-                if (angle < 1.67)
+                if (angle < 1.67f)
                 {
                     angle = 3.14f - angle;
                 }
@@ -188,7 +188,7 @@ namespace GunBond
             { // kalo belum keluar screen sebelah kanan
                 position.X = position.X + 1;
                 orientation = 1;
-                if (angle > 1.67)
+                if (angle > 1.67f)
                 {
                     angle = 3.14f - angle;
                 }
@@ -196,7 +196,7 @@ namespace GunBond
             else if (keys.IsKeyDown(Keys.D) && isCurrentPlayer == true && position.X >= Game1.GameObject.GraphicsDevice.Viewport.Width - 100 && Fire == false)
             {
                 orientation = 1; // kalo udah keluar screen dia cuma ganti orientasi (?)
-                if (angle > 1.67)
+                if (angle > 1.67f)
                 {
                     angle = 3.14f - angle;
                 }
