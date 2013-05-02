@@ -19,6 +19,8 @@ namespace UNOS_Sister
         Queue<byte[]> sendMsg;
         Queue<byte[]> receivedMsg;
 
+        public Dictionary<string, string> IPTable;
+
         List<Room> roomList;
         Room myRoom;
         List<String> peerList;
@@ -50,6 +52,8 @@ namespace UNOS_Sister
             keepAliveThread = new Thread(KeepAlive);
             senderThread = new Thread(sendMessage);
             //processThread = new Thread(processMessage);
+
+            IPTable = new Dictionary<string, string>();
         }
 
         public void ConnectToServer(string serverIP)
@@ -87,6 +91,7 @@ namespace UNOS_Sister
                         //parse peerID 
                         PeerID = PeerID.Substring(PeerID.Length-4, 4);
                         Console.WriteLine("Peer id : " + PeerID);
+                        IPTable.Add(PeerID, ipHostInfo.AddressList[0].ToString());
 
                         connected = true;
                         keepAliveThread.Start();
@@ -441,6 +446,7 @@ namespace UNOS_Sister
                                 if (peerList.Count() < myRoom.getMaxPlayer())
                                 {
                                     Console.WriteLine("Masih bisa join");
+                                    IPTable.Add(m.msgPeerID, m.IP);
                                     byte[] msg = Encoding.ASCII.GetBytes("GunbondGame00000000");
                                     List<byte> byteList = new List<byte>();
                                     byteList.AddRange(msg);
@@ -490,6 +496,7 @@ namespace UNOS_Sister
                             else if (m.msgCode == Message.QUIT) {
                                 peerList.Remove(m.msgPeerID);
                                 Console.WriteLine("Peer " + m.msgPeerID + " quit from your room. Boo!");
+                                IPTable.Remove(m.msgPeerID);
                                 byte[] msg = Encoding.ASCII.GetBytes("GunbondGame00000000");
                                 List<byte> byteList = new List<byte>();
                                 byteList.AddRange(msg);
