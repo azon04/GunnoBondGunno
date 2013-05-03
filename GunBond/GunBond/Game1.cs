@@ -80,6 +80,20 @@ namespace GunBond
                 player.update(gameTime);
             }
 
+            // cek collision trus kurangin HP player yang kena
+            foreach (Player player in Players.Values) 
+            {
+                foreach (Bullet bullet in Bullets) 
+                {
+                    if (bullet.isColide(player)) 
+                    {
+                        int HP = player.getHealthPoint();
+                        HP = HP - 20;
+                        player.setHealthPoint(HP);
+                    }
+                }
+            }
+
             base.Update(gameTime);
         }
 
