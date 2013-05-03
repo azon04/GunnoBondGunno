@@ -95,11 +95,11 @@ namespace GunBond
             // Texturing pointer
             if (myTeam == team.redTeam) // red pointer
             {
-                pointerTexture = AssetsManager.AssetsList["pointer"];
+                pointerTexture = AssetsManager.AssetsList["redPointer"];
             }
             else // blue pointer
             {
-                pointerTexture = AssetsManager.AssetsList["pointer"];
+                pointerTexture = AssetsManager.AssetsList["bluePointer"];
             }
             
         }
@@ -153,11 +153,11 @@ namespace GunBond
             // Texturing pointer
             if (myTeam == team.redTeam) // red pointer
             {
-                pointerTexture = AssetsManager.AssetsList["pointer"];
+                pointerTexture = AssetsManager.AssetsList["redPointer"];
             }
             else // blue pointer
             {
-                pointerTexture = AssetsManager.AssetsList["pointer"];
+                pointerTexture = AssetsManager.AssetsList["bluePointer"];
             }
         }
 

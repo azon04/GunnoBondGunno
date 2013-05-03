@@ -20,12 +20,20 @@ namespace GunBond
 
         public static void LoadContent(ContentManager Content)
         {
+            // texturing player
             AssetsList.Add("orang1", Content.Load<Texture2D>("orang1"));
             AssetsList.Add("orang2", Content.Load<Texture2D>("orang2"));
             AssetsList.Add("orang3", Content.Load<Texture2D>("orang3"));
             AssetsList.Add("orang4", Content.Load<Texture2D>("orang4"));
-            AssetsList.Add("pointer", Content.Load<Texture2D>("pointer"));
+
+            // texturing pointer
+            AssetsList.Add("redPointer", Content.Load<Texture2D>("pointer"));
+            AssetsList.Add("bluePointer", Content.Load<Texture2D>("pointer2"));
+
+            // texturing bullet
             AssetsList.Add("bullet", Content.Load<Texture2D>("bullet"));
+
+            // texturing background
             AssetsList.Add("background", Content.Load<Texture2D>("background"));
 
             FontList.Add("default", Content.Load<SpriteFont>("defaultFont"));
