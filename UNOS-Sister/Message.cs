@@ -114,6 +114,8 @@ namespace UNOS_Sister
                         msgPeerID = Encoding.ASCII.GetString(SubBytes(iMsg, 20, 4));
                         Console.WriteLine("message Length : " + iMsg.Count());
                         IP = Encoding.ASCII.GetString(SubBytes(iMsg,24,iMsg.Count()-24));
+                        IP = IP.Trim();
+                        IP = IP.Substring(0, IP.IndexOf('\0'));
                         Console.WriteLine(IP);
                     }
                 }

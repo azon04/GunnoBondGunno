@@ -23,8 +23,13 @@ namespace GunBond
                 if (peer.peer.playStatus == 2)
                 {
                     gameConnection = new GameConnection(peer.peer.PeerID);
-                    System.Diagnostics.Debug.WriteLine("Crator Peer : " + peer.peer.IPTable.Count);
-                    gameConnection.StartConfig(new List<string>(peer.peer.IPTable.Values));
+                    System.Diagnostics.Debug.WriteLine("Crator Peer : " + peer.peer.IPTable[peer.peer.PeerID]);
+                    List<string> ipAddress = new List<string>();
+                    foreach (string ip in peer.peer.IPTable.Values)
+                    {
+                        ipAddress.Add(ip);
+                    }
+                    gameConnection.StartConfig(ipAddress);
                 }
                 else if (peer.peer.playStatus == 1)
                 {

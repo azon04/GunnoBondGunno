@@ -50,13 +50,16 @@ namespace GunBond.Connection
 
         public void StartConfig(List<string> IPTable)
         {
+            System.Diagnostics.Debug.WriteLine("Start Config - Start");
             configurator = new Configurator(IP, IPTable);
             configurator.Status = Configurator.State.starting;
-            Console.WriteLine("Start Config " + IPTable.Count);
-            foreach (string ip in configurator.IPToConnect())
+            System.Diagnostics.Debug.WriteLine("Start Config " + IPTable.Count);
+            List<string> toConnect = configurator.IPToConnect();
+            Thread.Sleep(1000);
+            foreach (string ip in toConnect)
             {
                 ClientHandler ch = Connect(ip);
-                Console.WriteLine(ip);
+                System.Diagnostics.Debug.WriteLine(ip + "," + ip.Count());
                 ch.SendMsg(configurator.ConstructMessageConfig());
             }
         }
@@ -85,12 +88,6 @@ namespace GunBond.Connection
                     Console.WriteLine("Waiting for game client..");
                     Socket handler = Socket.Accept();
 
-                    // Create Client Handler
-                    lock (ClientHandlers)
-                    {
-                        ClientHandlers.Add(new ClientHandler(this, handler));
-                    }
-
                     byte[] bytes = new byte[1024];
                     int bytesRec = handler.Receive(bytes);
 
@@ -112,6 +109,13 @@ namespace GunBond.Connection
                         configurator.Parse(bytes);
                         StartConfig();
                     }
+
+                    // Create Client Handler
+                    lock (ClientHandlers)
+                    {
+                        ClientHandlers.Add(new ClientHandler(this, handler));
+                    }
+                    
                     Console.WriteLine(ClientHandlers.Count);
                 }
                 catch (Exception E)
@@ -127,10 +131,12 @@ namespace GunBond.Connection
             {
                 IPHostEntry ipHostInfo = Dns.Resolve(Dns.GetHostName());
                 IPAddress ipAddress = System.Net.IPAddress.Parse(IP);
-                IPEndPoint remoteEP = new IPEndPoint(ipAddress, 11000);
+                IPEndPoint remoteEP = new IPEndPoint(ipAddress, 12000);
 
                 //Create TCP/IP socket
                 Socket handler = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                handler.Connect(remoteEP);
+
                 ClientHandler clientHandler = new ClientHandler(this, handler);
                 lock (ClientHandlers)
                 {
@@ -140,7 +146,7 @@ namespace GunBond.Connection
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                System.Diagnostics.Debug.WriteLine(IP + "," + e.ToString());
                 return null;
             }
 

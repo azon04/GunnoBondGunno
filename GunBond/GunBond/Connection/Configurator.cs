@@ -22,6 +22,7 @@ namespace GunBond.Connection
 
         public Configurator(string IPAddress, List<string> Table)
         {
+            Console.WriteLine("Create Configurator");
             IPTable = Table;
             IP = IPAddress;
         }
@@ -75,6 +76,7 @@ namespace GunBond.Connection
         {
             List<byte> tempList = new List<byte>();
             tempList.AddRange(Encoding.ASCII.GetBytes(tag));
+            tempList.Add(5);
             string s = "";
             foreach (string ip in IPTable)
             {

@@ -346,6 +346,7 @@ namespace UNOS_Sister
                                         Tracker.ClientHandlers[Tracker.IPPeers[id]].handler.Send(msg.Construct());
                                     }
                                 }
+                                Thread.Sleep(500);
                             } else {
                                 msgResponse.msgCode = UNOS_Sister.Message.FAILED;
                             
