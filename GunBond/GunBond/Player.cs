@@ -23,12 +23,12 @@ namespace GunBond
         private int orientation; //0 = left, 1 = right
 
         // Enum jenis player (buat nentuin texture player)
-        private enum jenisPlayer { player1, player2, player3, player4 };
-        private jenisPlayer currentPlayer;
+        public enum jenisPlayer { player1, player2, player3, player4 };
+        public jenisPlayer currentPlayer;
 
         // Enum buat fitur team + counternya
-        private enum team { redTeam, blueTeam };
-        private team myTeam;
+        public enum team { redTeam, blueTeam };
+        public team myTeam;
 
         private static int redTeamCount;
         private static int blueTeamCount;
