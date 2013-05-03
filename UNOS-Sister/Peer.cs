@@ -290,6 +290,10 @@ namespace UNOS_Sister
                 byteList.Add(252); //<start_code>
                 byteList.AddRange(Encoding.ASCII.GetBytes(PeerID)); //<peer_id>
                 byteList.AddRange(Encoding.ASCII.GetBytes(room_id)); //<room_id>
+                if (50 - room_id.Length > 0)
+                {
+                    byteList.AddRange((new byte[50 - room_id.Length]).ToArray());
+                }
                 msg = byteList.ToArray();
                 lock (sendMsg) //add to Queue
                 {
@@ -331,7 +335,6 @@ namespace UNOS_Sister
                             });
                             peerUI.Invoke(printRecvMsg);
 
-
                             Message mSent = new Message();
                             mSent.parseMe(MsgToBeSent);
 
@@ -351,7 +354,11 @@ namespace UNOS_Sister
                                 {
                                     //start game here
                                     playStatus = 2;
-                                    peerUI.Close();
+                                    sendDel printCurrentRoom = new sendDel(() =>
+                                    {
+                                        peerUI.Close();
+                                    });
+                                    peerUI.Invoke(printCurrentRoom);
                                 }
                                 else if (mSent.msgCode == Message.CREATE_ROOM)
                                 {

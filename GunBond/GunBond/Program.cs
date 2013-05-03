@@ -19,13 +19,19 @@ namespace GunBond
 
             if (peer.peer.playStatus != 0)
             {
+                GameConnection gameConnection = null;
                 if (peer.peer.playStatus == 2)
                 {
-                    GameConnection gameConnection = new GameConnection(peer.peer.PeerID);
-                    System.Diagnostics.Debug.WriteLine(peer.peer.IPTable.Count);
+                    gameConnection = new GameConnection(peer.peer.PeerID);
+                    System.Diagnostics.Debug.WriteLine("Crator Peer : " + peer.peer.IPTable.Count);
                     gameConnection.StartConfig(new List<string>(peer.peer.IPTable.Values));
                 }
-                using (Game1 game = new Game1())
+                else if (peer.peer.playStatus == 1)
+                {
+                    gameConnection = new GameConnection(peer.peer.PeerID);
+                    System.Diagnostics.Debug.WriteLine("Peer : " + peer.peer.IPTable.Count);
+                }
+                using (Game1 game = new Game1(gameConnection))
                 {
                     game.Run();
                 }

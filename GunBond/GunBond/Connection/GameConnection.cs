@@ -11,7 +11,7 @@ using UNOS_Sister;
 
 namespace GunBond.Connection
 {
-    class GameConnection
+    public class GameConnection
     {
         public List<string> IPTable;
         public string IP;
@@ -31,7 +31,7 @@ namespace GunBond.Connection
             IPHostEntry ipHostInfo = Dns.Resolve(Dns.GetHostName());
             IPAddress ipAddress = ipHostInfo.AddressList[0];
             Console.WriteLine((IP = ipAddress.ToString()));
-            IPEndPoint localEndPoint = new IPEndPoint(ipAddress, 11000);
+            IPEndPoint localEndPoint = new IPEndPoint(ipAddress, 12000);
 
             // Create a TCP/IP socket
             Socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -78,10 +78,6 @@ namespace GunBond.Connection
         {
             while (!shutdown)
             {
-                lock (ClientHandlers)
-                {
-                    if (ClientHandlers.Count >= room.getMaxPlayer()-1) continue;
-                }
                 try
                 {
                     Console.WriteLine("Waiting for game client..");

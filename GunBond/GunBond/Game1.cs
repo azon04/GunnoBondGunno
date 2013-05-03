@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using GunBond.Connection;
 
 namespace GunBond
 {
@@ -25,7 +26,9 @@ namespace GunBond
         public Dictionary<string, Player> Players;
         public List<Bullet> RemoveBullets;
 
-        public Game1()
+        GameConnection connection;
+
+        public Game1(GameConnection con)
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
@@ -33,6 +36,7 @@ namespace GunBond
             Players = new Dictionary<string, Player>();
             RemoveBullets = new List<Bullet>();
             GameObject = this;
+            connection = con;
         }
 
         protected override void Initialize()
