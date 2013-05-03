@@ -17,7 +17,7 @@ namespace GunBond.Connection
         public string IP;
         public Socket Socket;
         List<ClientHandler> ClientHandlers;
-        List<String> peerID; //peer yang ada di room itu
+        string peerID; //peer yang ada di room itu
         Room room;
         Configurator configurator;
         Thread ListenThread;
@@ -26,7 +26,7 @@ namespace GunBond.Connection
 
         delegate void del(); // declare a delegate
 
-        public GameConnection()
+        public GameConnection(string peerID)
         {
             IPHostEntry ipHostInfo = Dns.Resolve(Dns.GetHostName());
             IPAddress ipAddress = ipHostInfo.AddressList[0];
@@ -43,9 +43,9 @@ namespace GunBond.Connection
             ClientHandlers = new List<ClientHandler>();
             ListenThread = new Thread(Listening);
             IPTable = new List<string>();
+            this.peerID = peerID;
 
             ListenThread.Start();
-
         }
 
         public void StartConfig(List<string> IPTable)

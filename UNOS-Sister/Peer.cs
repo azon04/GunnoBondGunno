@@ -8,11 +8,11 @@ using System.Net.Sockets;
 
 namespace UNOS_Sister
 {
-    class Peer
+    public class Peer
     {
         PeerUI peerUI;
 
-        int playStatus; // 0 = closed, 1 = player, 2 = room creator
+        public int playStatus; // 0 = closed, 1 = player, 2 = room creator
 
         public String PeerID = "";
         Socket sender;
@@ -33,6 +33,8 @@ namespace UNOS_Sister
         delegate void sendDel();
         delegate void recvDel();
 
+        public Dictionary<string, string> IPTable;
+
         byte[] roomIDbytes_ = new byte[50];
 
         Boolean inRoom = false;
@@ -52,6 +54,8 @@ namespace UNOS_Sister
             keepAliveThread = new Thread(KeepAlive);
             senderThread = new Thread(sendMessage);
             //processThread = new Thread(processMessage);
+
+            IPTable = new Dictionary<string, string>();
         }
 
         public void ConnectToServer(string serverIP)
@@ -89,6 +93,7 @@ namespace UNOS_Sister
                         //parse peerID 
                         PeerID = PeerID.Substring(PeerID.Length-4, 4);
                         Console.WriteLine("Peer id : " + PeerID);
+                        IPTable.Add(PeerID, ipHostInfo.AddressList[0].ToString());
 
                         connected = true;
                         keepAliveThread.Start();
@@ -456,6 +461,7 @@ namespace UNOS_Sister
                                 if (peerList.Count() < myRoom.getMaxPlayer())
                                 {
                                     Console.WriteLine("Masih bisa join");
+                                    IPTable.Add(m.msgPeerID, m.IP);
                                     byte[] msg = Encoding.ASCII.GetBytes("GunbondGame00000000");
                                     List<byte> byteList = new List<byte>();
                                     byteList.AddRange(msg);
@@ -505,6 +511,7 @@ namespace UNOS_Sister
                             else if (m.msgCode == Message.QUIT) {
                                 peerList.Remove(m.msgPeerID);
                                 Console.WriteLine("Peer " + m.msgPeerID + " quit from your room. Boo!");
+                                IPTable.Remove(m.msgPeerID);
                                 byte[] msg = Encoding.ASCII.GetBytes("GunbondGame00000000");
                                 List<byte> byteList = new List<byte>();
                                 byteList.AddRange(msg);

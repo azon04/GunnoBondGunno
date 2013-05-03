@@ -17,11 +17,14 @@ namespace GunBond
             PeerUI peer = new PeerUI();
             peer.ShowDialog();
 
-            if (true)
+            if (peer.peer.playStatus != 0)
             {
-                GameConnection gameConnection = new GameConnection();
-                System.Diagnostics.Debug.WriteLine(peer.peer.IPTable.Count);
-                gameConnection.StartConfig(new List<string>(peer.peer.IPTable.Values));
+                if (peer.peer.playStatus == 2)
+                {
+                    GameConnection gameConnection = new GameConnection(peer.peer.PeerID);
+                    System.Diagnostics.Debug.WriteLine(peer.peer.IPTable.Count);
+                    gameConnection.StartConfig(new List<string>(peer.peer.IPTable.Values));
+                }
                 using (Game1 game = new Game1())
                 {
                     game.Run();
