@@ -345,7 +345,11 @@ namespace UNOS_Sister
                             { 
                                 //start game here
                                 playStatus = 1;
-                                peerUI.Close();
+                                sendDel printCurrentRoom = new sendDel(() =>
+                                {
+                                    peerUI.Close();
+                                });
+                                peerUI.Invoke(printCurrentRoom);
                             }
                             else
                             if (m.msgCode == Message.SUCCESS)

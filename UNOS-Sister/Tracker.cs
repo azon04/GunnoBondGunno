@@ -343,7 +343,7 @@ namespace UNOS_Sister
                                 {
                                     if (!id.Equals(msg.msgPeerID))
                                     {
-                                        Tracker.ClientHandlers[id].handler.Send(msg.Construct());
+                                        Tracker.ClientHandlers[Tracker.IPPeers[id]].handler.Send(msg.Construct());
                                     }
                                 }
                             } else {
