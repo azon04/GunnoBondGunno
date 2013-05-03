@@ -23,8 +23,18 @@ namespace GunBond
         private int orientation; //0 = left, 1 = right
 
         // Enum jenis player (buat nentuin texture player)
-        public enum jenisPlayer { player1, player2, player3, player4 };
-        public jenisPlayer currentPlayer;
+        private enum jenisPlayer { player1, player2, player3, player4 };
+        private jenisPlayer currentPlayer;
+
+        // Enum buat fitur team + counternya
+        private enum team { redTeam, blueTeam };
+        private team myTeam;
+
+        private static int redTeamCount;
+        private static int blueTeamCount;
+
+        // max player
+        private static int max_player;
 
         // Texture player
         Texture2D playerTexture;
@@ -47,9 +57,40 @@ namespace GunBond
             orientation = 0;
 
             // randomize jenis player (dari segi texture)
-            Array jenis = Enum.GetValues(typeof(jenisPlayer));
             Random random = new Random();
+            
+            Array jenis = Enum.GetValues(typeof(jenisPlayer));
             currentPlayer = (jenisPlayer)jenis.GetValue(random.Next(jenis.Length));
+
+            // randomize team
+            Array tim = Enum.GetValues(typeof(team));
+            myTeam = (team)tim.GetValue(random.Next(tim.Length));
+
+            // check team max player
+            if (myTeam == team.redTeam)
+            {
+                if (redTeamCount < max_player / 2)
+                {
+                    redTeamCount++;
+                }
+                else
+                {
+                    myTeam = team.blueTeam;
+                    blueTeamCount++;
+                }
+            }
+            else
+            {
+                if (blueTeamCount < max_player / 2)
+                {
+                    blueTeamCount++;
+                }
+                else
+                {
+                    myTeam = team.redTeam;
+                    redTeamCount++;
+                }
+            }
 
             // Texturing pointer
             pointerTexture = AssetsManager.AssetsList["pointer"];
@@ -65,10 +106,41 @@ namespace GunBond
             Fire = false;
             orientation = 0;
 
+            Random random = new Random();
+            
             // randomize jenis player (dari segi texture)
             Array jenis = Enum.GetValues(typeof(jenisPlayer));
-            Random random = new Random();
             currentPlayer = (jenisPlayer)jenis.GetValue(random.Next(jenis.Length));
+
+            // randomize team
+            Array tim = Enum.GetValues(typeof(team));
+            myTeam = (team)tim.GetValue(random.Next(tim.Length));
+
+            // check team max player
+            if (myTeam == team.redTeam)
+            {
+                if (redTeamCount < max_player / 2)
+                {
+                    redTeamCount++;
+                }
+                else
+                {
+                    myTeam = team.blueTeam;
+                    blueTeamCount++;
+                }
+            }
+            else 
+            {
+                if (blueTeamCount < max_player / 2)
+                {
+                    blueTeamCount++;
+                }
+                else
+                {
+                    myTeam = team.redTeam;
+                    redTeamCount++;
+                }
+            }
 
             // Texturing pointer
             pointerTexture = AssetsManager.AssetsList["pointer"];
@@ -103,8 +175,29 @@ namespace GunBond
         {
             return isCurrentPlayer;
         }
-        
+
+        public Texture2D getPlayerTexture() 
+        {
+            return playerTexture;
+        }
+
+        public team getMyTeam() 
+        {
+            return myTeam;
+        }
+
+        public static int getMaxPlayer()
+        {
+            return max_player;
+        }
+
+
         // setter
+        public void setOrientation(int _orientation) 
+        {
+            orientation = _orientation;
+        }
+
         public void setPeerID(string _ID)
         {
             peerID = _ID;
@@ -128,6 +221,21 @@ namespace GunBond
         public void setIsCurrentPlayer(bool curr)
         {
             isCurrentPlayer = curr;
+        }
+
+        public void setPlayerTexture(Texture2D _playerTexture) 
+        {
+            playerTexture = _playerTexture;
+        }
+
+        public void setTeam(team _team) 
+        {
+            myTeam = _team;
+        }
+
+        public static void setMaxPlayer(int _maxPlayer)
+        {
+            max_player = _maxPlayer;
         }
 
         // method lain { getIsCurrentPlayer(), isFire() }
@@ -167,7 +275,8 @@ namespace GunBond
             
             // geser player
             if (keys.IsKeyDown(Keys.A) && isCurrentPlayer == true && position.X > 0 && Fire == false)
-            { // kalo belum keluar screen sebelah kiri
+            {
+                // kalo belum keluar screen sebelah kiri
                 position.X = position.X - 1;
                 orientation = 0;
                 if (angle < 1.67f) 
@@ -185,7 +294,8 @@ namespace GunBond
             }
 
             if (keys.IsKeyDown(Keys.D) && isCurrentPlayer == true && position.X < Game1.GameObject.GraphicsDevice.Viewport.Width - 100 && Fire == false)
-            { // kalo belum keluar screen sebelah kanan
+            {
+                // kalo belum keluar screen sebelah kanan
                 position.X = position.X + 1;
                 orientation = 1;
                 if (angle > 1.67f)
@@ -228,7 +338,7 @@ namespace GunBond
                 spriteBatch.Draw(playerTexture, s, r, Color.White, 0.0f, new Vector2(playerTexture.Width / 2, playerTexture.Height / 2), SpriteEffects.FlipHorizontally, 0);
 
             }
-            else
+            else // hadap kiri
             {
                 Rectangle s = new Rectangle((int)position.X + playerTexture.Width / 2, (int)position.Y + playerTexture.Height / 2, playerTexture.Width, playerTexture.Height);
                 Rectangle r = new Rectangle(0, 0, playerTexture.Width, playerTexture.Height);

@@ -28,6 +28,7 @@ namespace GunBond
 
         GameConnection connection;
 
+        // constructor
         public Game1(GameConnection con)
         {
             graphics = new GraphicsDeviceManager(this);
