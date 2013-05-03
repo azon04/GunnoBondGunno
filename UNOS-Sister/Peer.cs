@@ -8,9 +8,11 @@ using System.Net.Sockets;
 
 namespace UNOS_Sister
 {
-    public class Peer
+    class Peer
     {
         PeerUI peerUI;
+
+        int playStatus; // 0 = closed, 1 = player, 2 = room creator
 
         public String PeerID = "";
         Socket sender;
@@ -18,8 +20,6 @@ namespace UNOS_Sister
 
         Queue<byte[]> sendMsg;
         Queue<byte[]> receivedMsg;
-
-        public Dictionary<string, string> IPTable;
 
         List<Room> roomList;
         Room myRoom;
@@ -42,7 +42,7 @@ namespace UNOS_Sister
         public Peer(PeerUI peerUI)
         {
             this.peerUI = peerUI;
-            
+            playStatus = 0;
             sendMsg = new Queue<byte[]>();
             receivedMsg = new Queue<byte[]>();
             roomList = new List<Room>();
@@ -52,8 +52,6 @@ namespace UNOS_Sister
             keepAliveThread = new Thread(KeepAlive);
             senderThread = new Thread(sendMessage);
             //processThread = new Thread(processMessage);
-
-            IPTable = new Dictionary<string, string>();
         }
 
         public void ConnectToServer(string serverIP)
@@ -91,7 +89,6 @@ namespace UNOS_Sister
                         //parse peerID 
                         PeerID = PeerID.Substring(PeerID.Length-4, 4);
                         Console.WriteLine("Peer id : " + PeerID);
-                        IPTable.Add(PeerID, ipHostInfo.AddressList[0].ToString());
 
                         connected = true;
                         keepAliveThread.Start();
@@ -336,9 +333,22 @@ namespace UNOS_Sister
                             Message m = new Message();
                             m.parseMe(bytes);
 
+                            if (m.msgCode == Message.START)
+                            { 
+                                //start game here
+                                playStatus = 1;
+                                peerUI.Close();
+                            }
+                            else
                             if (m.msgCode == Message.SUCCESS)
                             {
-                                if (mSent.msgCode == Message.CREATE_ROOM)
+                                if (mSent.msgCode == Message.START)
+                                {
+                                    //start game here
+                                    playStatus = 2;
+                                    peerUI.Close();
+                                }
+                                else if (mSent.msgCode == Message.CREATE_ROOM)
                                 {
                                     //create room success 
                                     Console.WriteLine("Create Room Success");
@@ -359,7 +369,7 @@ namespace UNOS_Sister
                                 {
                                     //join success
                                     inRoom = true;
-                                    
+
                                     sendDel printCurrentRoom = new sendDel(() =>
                                     {
                                         peerUI.textBox6.Text = joininRoom;
@@ -374,9 +384,9 @@ namespace UNOS_Sister
                                             peerUI.richTextBox1.Text += peerList[i];
                                             peerUI.richTextBox1.Text += "\n";
                                         }
-                                        
+
                                     });
-                                    peerUI.Invoke(printRoomMember);  
+                                    peerUI.Invoke(printRoomMember);
 
                                     Console.WriteLine("Join Room Success");
                                     //TO DO : koneksi dengan GameConnection
@@ -387,8 +397,8 @@ namespace UNOS_Sister
                                     Console.WriteLine("Keep Alive Success");
                                 }
                                 else if (mSent.msgCode == Message.QUIT)
-                                {                                    
-                                    
+                                {
+
                                     //quit success
                                     inRoom = false;
                                     sendDel printCurrentRoom = new sendDel(() =>
@@ -446,7 +456,6 @@ namespace UNOS_Sister
                                 if (peerList.Count() < myRoom.getMaxPlayer())
                                 {
                                     Console.WriteLine("Masih bisa join");
-                                    IPTable.Add(m.msgPeerID, m.IP);
                                     byte[] msg = Encoding.ASCII.GetBytes("GunbondGame00000000");
                                     List<byte> byteList = new List<byte>();
                                     byteList.AddRange(msg);
@@ -496,7 +505,6 @@ namespace UNOS_Sister
                             else if (m.msgCode == Message.QUIT) {
                                 peerList.Remove(m.msgPeerID);
                                 Console.WriteLine("Peer " + m.msgPeerID + " quit from your room. Boo!");
-                                IPTable.Remove(m.msgPeerID);
                                 byte[] msg = Encoding.ASCII.GetBytes("GunbondGame00000000");
                                 List<byte> byteList = new List<byte>();
                                 byteList.AddRange(msg);
