@@ -93,7 +93,15 @@ namespace GunBond
             }
 
             // Texturing pointer
-            pointerTexture = AssetsManager.AssetsList["pointer"];
+            if (myTeam == team.redTeam) // red pointer
+            {
+                pointerTexture = AssetsManager.AssetsList["pointer"];
+            }
+            else // blue pointer
+            {
+                pointerTexture = AssetsManager.AssetsList["pointer"];
+            }
+            
         }
 
         public Player(string _ID, Vector2 _position)
@@ -143,7 +151,14 @@ namespace GunBond
             }
 
             // Texturing pointer
-            pointerTexture = AssetsManager.AssetsList["pointer"];
+            if (myTeam == team.redTeam) // red pointer
+            {
+                pointerTexture = AssetsManager.AssetsList["pointer"];
+            }
+            else // blue pointer
+            {
+                pointerTexture = AssetsManager.AssetsList["pointer"];
+            }
         }
 
         // getter
