@@ -8,7 +8,7 @@ using System.Net.Sockets;
 
 namespace UNOS_Sister
 {
-    class Peer
+    public class Peer
     {
         PeerUI peerUI;
 

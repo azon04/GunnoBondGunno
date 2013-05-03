@@ -1,6 +1,8 @@
 using System;
 using UNOS_Sister;
 using System.Windows.Forms;
+using GunBond.Connection;
+using System.Collections.Generic;
 
 namespace GunBond
 {
@@ -14,10 +16,16 @@ namespace GunBond
         {
             PeerUI peer = new PeerUI();
             peer.ShowDialog();
-            
-            using (Game1 game = new Game1())
+
+            if (true)
             {
-                game.Run();
+                GameConnection gameConnection = new GameConnection();
+                System.Diagnostics.Debug.WriteLine(peer.peer.IPTable.Count);
+                gameConnection.StartConfig(new List<string>(peer.peer.IPTable.Values));
+                using (Game1 game = new Game1())
+                {
+                    game.Run();
+                }
             }
         }
     }

@@ -412,6 +412,7 @@ namespace UNOS_Sister
                                 UNOS_Sister.Message msgConfirmation = new UNOS_Sister.Message();
                                 msgConfirmation.msgCode = Message.CHECK;
                                 msgConfirmation.msgPeerID = msg.msgPeerID;
+                                msgConfirmation.IP = this.IP;
                                 msgResponse.msgCode = handlerCreatorPeer.SentForConfirmation(msgConfirmation.Construct()).msgCode;
                                 if (msgResponse.msgCode == Message.SUCCESS)
                                 {

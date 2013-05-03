@@ -181,7 +181,7 @@ namespace GunBond.Connection
         }
 
         #region ClientHandler
-        class ClientHandler
+        public class ClientHandler
         {
             Socket handler;
             Thread MsgThread;

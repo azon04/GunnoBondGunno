@@ -13,7 +13,7 @@ namespace UNOS_Sister
 {
     public partial class PeerUI : Form
     {
-        Peer peer; 
+        public Peer peer; 
         public PeerUI()
         {
             peer = new Peer(this);
