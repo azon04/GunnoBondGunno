@@ -50,11 +50,13 @@ namespace GunBond.Connection
 
         public void StartConfig(List<string> IPTable)
         {
-            configurator = new Configurator(IP,IPTable);
+            configurator = new Configurator(IP, IPTable);
             configurator.Status = Configurator.State.starting;
+            Console.WriteLine("Start Config " + IPTable.Count);
             foreach (string ip in configurator.IPToConnect())
             {
                 ClientHandler ch = Connect(ip);
+                Console.WriteLine(ip);
                 ch.SendMsg(configurator.ConstructMessageConfig());
             }
         }
@@ -168,7 +170,7 @@ namespace GunBond.Connection
             }
         }
 
-        public void BroadCastMessage (String msg)
+        public void BroadCastMessage(String msg)
         {
             foreach (ClientHandler handler in ClientHandlers)
             {
@@ -181,7 +183,7 @@ namespace GunBond.Connection
         {
             Socket handler;
             Thread MsgThread;
-            GameConnection GameConnection;
+            GameConnection Connection;
             string PeerID;
 
             int time = 0;
@@ -192,7 +194,7 @@ namespace GunBond.Connection
             public ClientHandler(GameConnection tc, Socket handler)
             {
                 this.handler = handler;
-                GameConnection = tc;
+                Connection = tc;
 
                 PeerID = (handler.RemoteEndPoint as IPEndPoint).Address.ToString();
                 string[] split_res = PeerID.Split('.');
@@ -234,9 +236,9 @@ namespace GunBond.Connection
                     {
                         Close();
                         running = false;
-                        lock (GameConnection.ClientHandlers)
+                        lock (Connection.ClientHandlers)
                         {
-                            GameConnection.ClientHandlers.Remove(this);
+                            Connection.ClientHandlers.Remove(this);
                         }
                         break;
                     }
@@ -260,16 +262,76 @@ namespace GunBond.Connection
                         string response = "OK";
 
                         // Message Handling Here
-                       
+                        Message m = new Message();
+                        m.Parse(bytes);
+                        if (m.msgCode == Message.FIRE)
+                        {
+                            //nembak
+                            Game1.GameObject.Bullets.Add(new Bullet(Game1.GameObject,m.playerPos, m.bulletV0, m.playerRot, new Microsoft.Xna.Framework.Vector2(0,10)); 
+                        }
+                        else if (m.msgCode == Message.KEEP_ALIVE)
+                        {
+                                //keep alive
+                            Player player = Game1.GameObject.Players[m.PeerID];
+                            if (player != null)
+                            {
+                                player.setHealthPoint(m.HP);
+                            }
+                        }
+                        else if (m.msgCode == Message.NEXT_PLAYER)
+                        {
+                            //next player
+                            if (Connection.peerID.Equals(m.nextPlayer))
+                            {
+                                // Set Fire true
+                            }
+                        } 
+                        else if (m.msgCode == Message.POS)
+                        {
+                            //kirim position
+                            Player player = Game1.GameObject.Players[m.PeerID];
+                            if (player != null)
+                            {
+                                player.setPosition(m.playerPos);
+                                player.setAngle(m.playerRot);
+                                //player.setOrientation(m.playerOrt);
+                            }
+                        }
+                        else if (m.msgCode == Message.INIT)
+                        {
+                            //init
+                            Player player = new Player(m.PeerID, m.playerPos0);
+                            switch (m.playerTexture)
+                            {
+                                case 0 :
+                                    
+                                    break;
+                                case 1:
+
+                                    break;
+                                case 2:
+
+                                    break;
+                                case 3:
+
+                                    break;
+                                default:
+
+                                    break;
+                            }
+
+                            Game1.GameObject.Players.Add(m.PeerID, player);
+                        }
+
                         //Response
                         SendMsg(response);
                     }
                     catch (SocketException se)
                     {
                         running = false;
-                        lock (GameConnection.ClientHandlers)
+                        lock (Connection.ClientHandlers)
                         {
-                            GameConnection.ClientHandlers.Remove(this);
+                            Connection.ClientHandlers.Remove(this);
                         }
                     }
                 }

@@ -112,9 +112,9 @@ namespace UNOS_Sister
                     else if (msgCode == 100)
                     {
                         msgPeerID = Encoding.ASCII.GetString(SubBytes(iMsg, 20, 4));
-                        System.Diagnostics.Debug.WriteLine("message Length : " + iMsg.Count());
-                        IP = Encoding.ASCII.GetString(SubBytes(iMsg,25,5));
-                        System.Diagnostics.Debug.WriteLine(IP);
+                        Console.WriteLine("message Length : " + iMsg.Count());
+                        IP = Encoding.ASCII.GetString(SubBytes(iMsg,24,iMsg.Count()-24));
+                        Console.WriteLine(IP);
                     }
                 }
             } else {
