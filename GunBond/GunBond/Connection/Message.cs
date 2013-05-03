@@ -73,7 +73,13 @@ namespace GunBond.Connection
                 } else if (msgCode == 2) {
                     //process FIRE msg
                     String msgData = Encoding.ASCII.GetString(SubBytes(iMsg, 12, iMsg.Length - 12));
-                    elapsedTime = float.Parse(msgData);
+                    String[] info = msgData.Split('|');
+                    String[] VectorPos = info[0].Split(',');
+                    bulletV0 = new Vector2(float.Parse(VectorPos[0]), float.Parse(VectorPos[1]));
+                    VectorPos = info[1].Split(',');
+                    playerPos.X = float.Parse(VectorPos[0]);
+                    playerPos.Y = float.Parse(VectorPos[1]);
+                    playerRot = float.Parse(info[1]);
                 } else if (msgCode == 3) {
                     //process NEXT_PLAYER msg
                     nextPlayer = Encoding.ASCII.GetString(SubBytes(iMsg, 12, 4));
@@ -129,7 +135,7 @@ namespace GunBond.Connection
             {
                 tempList.Add(POS);
                 tempList.AddRange(Encoding.ASCII.GetBytes("" + playerPos.X + "," + playerPos.Y + "|"));
-                tempList.AddRange(Encoding.ASCII.GetBytes(playerRot.ToString() + "|"));
+                tempList.AddRange(Encoding.ASCII.GetBytes(playerRot.ToString("0.000") + "|"));
                 tempList.AddRange(Encoding.ASCII.GetBytes(playerOrt.ToString()));
             }
             else if (msgCode == 1)
@@ -142,16 +148,18 @@ namespace GunBond.Connection
             {
                 tempList.Add(FIRE);
 
-                /*
+                
                 //skenario1
-                tempList.AddRange(Encoding.ASCII.GetBytes(bulletV0)); //ambil jadi string
-                tempList.AddRange(Encoding.ASCII.GetBytes(playerRot));
-                 */
+                tempList.AddRange(Encoding.ASCII.GetBytes("" + bulletV0.X + "," + bulletV0.Y + "|")); //ambil jadi string
+                tempList.AddRange(Encoding.ASCII.GetBytes("" + playerPos.X + "," + playerPos.Y + "|"));
+                tempList.AddRange(Encoding.ASCII.GetBytes(playerRot.ToString("0.000")));
+                 
 
 
+                /*
                 //skenario2
                 tempList.AddRange(Encoding.ASCII.GetBytes(elapsedTime.ToString("0.000")));
-
+                */
                 /*
                 //skenario3
                 tempList.AddRange(Encoding.ASCII.GetBytes(bulletPos)); //
