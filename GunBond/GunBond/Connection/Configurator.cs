@@ -86,6 +86,19 @@ namespace GunBond.Connection
             return tempList.ToArray();
         }
 
+        public byte[] ConstructMessageCompleteConfig()
+        {
+            List<byte> tempList = new List<byte>();
+            tempList.AddRange(Encoding.ASCII.GetBytes(tag));
+            tempList.Add(6);
+            return tempList.ToArray();
+        }
+
+        public bool IsMessageComplete(byte[] bytes)
+        {
+            return bytes[8] == 6;
+        }
+
         public void Parse(byte[] bytes) {
             string s = Encoding.ASCII.GetString(bytes);
             string[] sres = s.Split(',');

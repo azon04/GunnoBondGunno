@@ -17,7 +17,7 @@ namespace GunBond.Connection
         public string IP;
         public Socket Socket;
         List<ClientHandler> ClientHandlers;
-        string peerID; //peer yang ada di room itu
+        public string peerID; //peer yang ada di room itu
         Room room;
         Configurator configurator;
         Thread ListenThread;
@@ -45,7 +45,8 @@ namespace GunBond.Connection
             IPTable = new List<string>();
             this.peerID = peerID;
 
-            ListenThread.Start();
+            //ListenThread.Start();
+            configurator = new Configurator(IP);
         }
 
         public void StartConfig(List<string> IPTable)
@@ -55,7 +56,7 @@ namespace GunBond.Connection
             configurator.Status = Configurator.State.starting;
             System.Diagnostics.Debug.WriteLine("Start Config " + IPTable.Count);
             List<string> toConnect = configurator.IPToConnect();
-            Thread.Sleep(1000);
+            Thread.Sleep(2000);
             foreach (string ip in toConnect)
             {
                 ClientHandler ch = Connect(ip);
@@ -74,6 +75,78 @@ namespace GunBond.Connection
             }
         }
 
+        public void WaitConfigComplete()
+        {
+            while (configurator.Status != Configurator.State.done)
+            {
+                try
+                {
+                    Console.WriteLine("Waiting for game client..");
+                    Socket handler = Socket.Accept();
+
+                    byte[] bytes = new byte[1024];
+                    int bytesRec = handler.Receive(bytes);
+
+                        BroadCastMessage(configurator.ConstructMessageCompleteConfig());
+                        configurator.Status = Configurator.State.done;
+
+                    // Create Client Handler
+                    lock (ClientHandlers)
+                    {
+                        ClientHandlers.Add(new ClientHandler(this, handler));
+                    }
+
+                    Console.WriteLine(ClientHandlers.Count);
+                }
+                catch (Exception e)
+                {
+
+                }
+            }
+        }
+
+        public void WaitConfig()
+        {
+            Thread WaitConfigThread = new Thread(WaitConfigRun);
+            WaitConfigThread.Start();
+            while (configurator.Status != Configurator.State.done)
+            {
+            }
+        }
+
+        private void WaitConfigRun()
+        {
+            while (configurator.Status != Configurator.State.done)
+            {
+                try
+                {
+                    Console.WriteLine("Waiting for game client..");
+                    Socket handler = Socket.Accept();
+
+                    byte[] bytes = new byte[1024];
+                    int bytesRec = handler.Receive(bytes);
+
+                    configurator.Parse(bytes);
+                    StartConfig();
+
+                    ClientHandler handlerClient = new ClientHandler(this, handler);
+                    handlerClient.WaitConfigComplete();
+                    
+                    // Create Client Handler
+                    lock (ClientHandlers)
+                    {
+                        ClientHandlers.Add(handlerClient);
+                    }
+
+                    Console.WriteLine(ClientHandlers.Count);
+                }
+                catch (Exception E)
+                {
+
+                }
+            }
+        }
+        
         ~GameConnection()
         {
             Console.WriteLine("Deconstructor");
@@ -135,6 +208,7 @@ namespace GunBond.Connection
 
                 //Create TCP/IP socket
                 Socket handler = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
                 handler.Connect(remoteEP);
 
                 ClientHandler clientHandler = new ClientHandler(this, handler);
@@ -143,6 +217,14 @@ namespace GunBond.Connection
                     ClientHandlers.Add(clientHandler);
                 }
                 return clientHandler;
+            }
+            catch (SocketException se)
+            {
+                if (se.ErrorCode == (int)SocketError.ConnectionRefused)
+                {
+                    return Connect(IP);
+                }
+                return null;
             }
             catch (Exception e)
             {
@@ -184,6 +266,22 @@ namespace GunBond.Connection
             }
         }
 
+        public void BroadCastMessage(byte[] msg)
+        {
+            foreach (ClientHandler handler in ClientHandlers)
+            {
+                handler.SendMsg(msg);
+            }
+        }
+
+        public void Start()
+        {
+            foreach (ClientHandler handler in ClientHandlers)
+            {
+                handler.Start();
+            }
+        }
+
         #region ClientHandler
         public class ClientHandler
         {
@@ -205,12 +303,43 @@ namespace GunBond.Connection
                 PeerID = (handler.RemoteEndPoint as IPEndPoint).Address.ToString();
                 string[] split_res = PeerID.Split('.');
                 PeerID = "P" + split_res[split_res.Length - 1];
+                
+            }
 
+            public void Start()
+            {
                 MsgThread = new Thread(RecvrMsgCallback);
                 MsgThread.Start();
 
                 Thread CounterThread = new Thread(Counter);
                 CounterThread.Start();
+            }
+
+            public void WaitConfigComplete()
+            {
+                Thread configThread = new Thread(ConfigComplete);
+                configThread.Start();
+            }
+
+            private void ConfigComplete()
+            {
+                while (Connection.configurator.Status != Configurator.State.done)
+                {
+                    try
+                    {
+                        byte[] bytes = new byte[1024];
+                        int bytesRec = handler.Receive(bytes);
+
+                            if(Connection.configurator.IsMessageComplete(bytes)) {
+                                Connection.configurator.Status = Configurator.State.done;
+                            }
+                            Connection.BroadCastMessage(Connection.configurator.ConstructMessageCompleteConfig());
+                       
+                    }
+                    catch (Exception e)
+                    {
+                    }
+                }
             }
 
             public void SendMsg(string msg)
@@ -330,7 +459,7 @@ namespace GunBond.Connection
                         }
 
                         //Response
-                        SendMsg(response);
+                        //SendMsg(response);
                     }
                     catch (SocketException se)
                     {

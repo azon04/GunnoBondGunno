@@ -57,8 +57,17 @@ namespace GunBond
 
             // TODO: use this.Content to load your game content here
             AssetsManager.LoadContent(Content);
-            
-            Players.Add("AAA",new Player("AAA",new Vector2(600,300)));
+            connection.Start();
+
+            System.Diagnostics.Debug.WriteLine("Sent Init");
+            Random rand = new Random();
+            Vector2 vec = new Vector2(rand.Next(800), 300);
+            Players.Add(connection.peerID,new Player("AAA",vec));
+            Message msg = new Message();
+            msg.msgCode = Message.INIT;
+            msg.playerPos0 = vec;
+            connection.BroadCastMessage(msg.Construct());
+
             Bullets.Add(new Bullet(this, Vector2.Zero, new Vector2(-600, 300), 0f, new Vector2(0, 10)));
         }
 

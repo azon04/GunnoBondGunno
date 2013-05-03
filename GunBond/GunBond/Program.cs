@@ -15,32 +15,38 @@ namespace GunBond
         static void Main(string[] args)
         {
             PeerUI peer = new PeerUI();
-            peer.ShowDialog();
-
-            if (peer.peer.playStatus != 0)
+            do
             {
-                GameConnection gameConnection = null;
-                if (peer.peer.playStatus == 2)
+                peer.ShowDialog();
+
+                if (peer.peer.playStatus != 0)
                 {
-                    gameConnection = new GameConnection(peer.peer.PeerID);
-                    System.Diagnostics.Debug.WriteLine("Crator Peer : " + peer.peer.IPTable[peer.peer.PeerID]);
-                    List<string> ipAddress = new List<string>();
-                    foreach (string ip in peer.peer.IPTable.Values)
+                    GameConnection gameConnection = null;
+                    if (peer.peer.playStatus == 2)
                     {
-                        ipAddress.Add(ip);
+                        gameConnection = new GameConnection(peer.peer.PeerID);
+                        System.Diagnostics.Debug.WriteLine("Crator Peer : " + peer.peer.IPTable[peer.peer.PeerID]);
+                        List<string> ipAddress = new List<string>();
+                        foreach (string ip in peer.peer.IPTable.Values)
+                        {
+                            ipAddress.Add(ip);
+                        }
+                        gameConnection.StartConfig(ipAddress);
+                        gameConnection.WaitConfigComplete();
                     }
-                    gameConnection.StartConfig(ipAddress);
+                    else if (peer.peer.playStatus == 1)
+                    {
+                        gameConnection = new GameConnection(peer.peer.PeerID);
+                        System.Diagnostics.Debug.WriteLine("Peer : " + peer.peer.IPTable.Count);
+                        gameConnection.WaitConfig();
+                    }
+                    using (Game1 game = new Game1(gameConnection))
+                    {
+                        game.Run();
+                    }
+                    gameConnection.Close();
                 }
-                else if (peer.peer.playStatus == 1)
-                {
-                    gameConnection = new GameConnection(peer.peer.PeerID);
-                    System.Diagnostics.Debug.WriteLine("Peer : " + peer.peer.IPTable.Count);
-                }
-                using (Game1 game = new Game1(gameConnection))
-                {
-                    game.Run();
-                }
-            }
+            } while (peer.peer.playStatus != 0);
         }
     }
 #endif
