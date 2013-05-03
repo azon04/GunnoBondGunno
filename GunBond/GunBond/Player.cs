@@ -28,11 +28,7 @@ namespace GunBond
 
         // Enum buat fitur team + counternya
         public enum team { redTeam, blueTeam };
-<<<<<<< HEAD
-        public team myTeam;
-=======
         private team myTeam;
->>>>>>> COmmit besar-besaran
 
         private static int redTeamCount;
         private static int blueTeamCount;
