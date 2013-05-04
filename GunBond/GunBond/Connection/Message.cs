@@ -135,10 +135,14 @@ namespace GunBond.Connection
             {
                 return ("Kode : " + msgCode.ToString() + ", PeerID : " + PeerID + ", isi message : INIT");
             }
+<<<<<<< HEAD
             else 
             {
                 return ("Message Tidak Valid");
             }
+=======
+            return "Kode : " + msgCode.ToString();
+>>>>>>> 8ddb9741403808b552a90212b2df20ecb068d9f5
         }
 
         public override bool Equals(object obj)

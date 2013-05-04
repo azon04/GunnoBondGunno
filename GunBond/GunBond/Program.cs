@@ -22,9 +22,9 @@ namespace GunBond
                 if (peer.peer.playStatus != 0)
                 {
                     GameConnection gameConnection = null;
+                    peer.peer.DisconnectFromServer();
                     if (peer.peer.playStatus == 2)
-                    {
-                        peer.peer.DisconnectFromServer();
+                    {   
                         gameConnection = new GameConnection(peer.peer.PeerID);
                         gameConnection.PeerIDs = peer.peer.peerList;
                         System.Diagnostics.Debug.WriteLine("Crator Peer : " + peer.peer.IPTable[peer.peer.PeerID]);
