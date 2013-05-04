@@ -115,7 +115,26 @@ namespace GunBond.Connection
        
         public string GetString()
         {
-            return msgCode.ToString();
+            if (msgCode == 0) // position
+            {
+                return ("Kode : " + msgCode.ToString() + ", PeerID : " + PeerID + ", posisi : x = " + playerPos.X + ", y = " + playerPos.Y + ", orientasi : " + playerOrt + "angle : " + playerRot);
+            } 
+            else if (msgCode == 1) // update HP & keep alive
+            {
+                return ("Kode : " + msgCode.ToString() + ", PeerID : " + PeerID + ", HP : " + HP);
+            }
+            else if (msgCode == 2) // position + bullet position awal
+            {
+                return ("Kode : " + msgCode.ToString() + ", PeerID : " + PeerID + ", posisi : x = " + playerPos.X + ", y = " + playerPos.Y + ", orientasi : " + playerOrt + "angle : " + playerRot + "posisi awal bullet : x = " + bulletV0.X + ", y = " + bulletV0.Y);
+            }
+            else if(msgCode == 3) // message next player
+            {
+                return ("Kode : " + msgCode.ToString() + ", PeerID yang ngirim : " + PeerID + ", isi message : next player");
+            }
+            else if (msgCode == 4) // message INIT
+            {
+                return ("Kode : " + msgCode.ToString() + ", PeerID : " + PeerID + ", isi message : INIT");
+            }
         }
 
         public override bool Equals(object obj)
