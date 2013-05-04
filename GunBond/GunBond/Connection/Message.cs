@@ -81,7 +81,7 @@ namespace GunBond.Connection
                     VectorPos = info[1].Split(',');
                     playerPos.X = float.Parse(VectorPos[0]);
                     playerPos.Y = float.Parse(VectorPos[1]);
-                    playerRot = float.Parse(info[1]);
+                    playerRot = float.Parse(info[2]);
                 } else if (msgCode == 3) {
                     //process NEXT_PLAYER msg
                     nextPlayer = Encoding.ASCII.GetString(SubBytes(iMsg, 12, 4));
@@ -196,7 +196,7 @@ namespace GunBond.Connection
             else if (msgCode == 4)
             {
                 tempList.Add((byte)playerTexture);
-                tempList.AddRange(Encoding.ASCII.GetBytes("" + playerPos0.X + "," + playerPos0.Y));
+                tempList.AddRange(Encoding.ASCII.GetBytes("" + playerPos0.X.ToString("0.000") + "," + playerPos0.Y.ToString("0.000")));
             }
             else if (msgCode == 7)
             {
