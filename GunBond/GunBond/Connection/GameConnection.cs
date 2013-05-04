@@ -80,30 +80,34 @@ namespace GunBond.Connection
 
         public void WaitConfigComplete()
         {
-            while (configurator.Status != Configurator.State.done)
+            if (configurator.IPTable.Count > 2)
             {
-                try
+                while (configurator.Status != Configurator.State.done)
                 {
-                    Console.WriteLine("Waiting for game client..");
-                    Socket handler = Socket.Accept();
+                    try
+                    {
+                        Console.WriteLine("Waiting for game client..");
+                        Socket handler = Socket.Accept();
 
-                    byte[] bytes = new byte[1024];
-                    int bytesRec = handler.Receive(bytes);
+
+                        byte[] bytes = new byte[1024];
+                        int bytesRec = handler.Receive(bytes);
 
                         BroadCastMessage(configurator.ConstructMessageCompleteConfig());
                         configurator.Status = Configurator.State.done;
 
-                    // Create Client Handler
-                    lock (ClientHandlers)
-                    {
-                        ClientHandlers.Add(new ClientHandler(this, handler));
+                        // Create Client Handler
+                        lock (ClientHandlers)
+                        {
+                            ClientHandlers.Add(new ClientHandler(this, handler));
+                        }
+
+                        Console.WriteLine(ClientHandlers.Count);
                     }
+                    catch (Exception e)
+                    {
 
-                    Console.WriteLine(ClientHandlers.Count);
-                }
-                catch (Exception e)
-                {
-
+                    }
                 }
             }
         }

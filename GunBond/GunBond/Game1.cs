@@ -69,6 +69,7 @@ namespace GunBond
             Message msg = new Message();
             msg.msgCode = Message.INIT;
             msg.playerPos0 = vec;
+            msg.PeerID = connection.peerID;
             connection.BroadCastMessage(msg.Construct());
 
         }
