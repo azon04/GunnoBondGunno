@@ -87,11 +87,18 @@ namespace GunBond
             Content.Unload();
         }
 
+        
+
         protected override void Update(GameTime gameTime)
         {
             // Allows the game to exit
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
+
+            Message msgAlive = new Message();
+            msgAlive.msgCode = Message.KEEP_ALIVE;
+            msgAlive.HP = myPlayer.getHealthPoint();
+            connection.BroadCastMessage(msgAlive.Construct());
 
             // TODO: Add your update logic here
             foreach (Bullet bullet in Bullets)
@@ -107,16 +114,22 @@ namespace GunBond
             // cek collision trus kurangin HP player yang kena
             foreach (Player player in Players.Values) 
             {
-                foreach (Bullet bullet in Bullets) 
-                {
-                    if (bullet.isColide(player)) 
+                foreach (Bullet bullet in Bullets)
                     {
+<<<<<<< HEAD
                         int HP = player.getHealthPoint();
                         HP = HP - 20;
                         player.setHealthPoint(HP);
                         RemoveBullets.Add(bullet);
+=======
+                        if (bullet.isColide(player))
+                        {
+                            int HP = player.getHealthPoint();
+                            HP = HP - 20;
+                            player.setHealthPoint(HP);
+                        }
+>>>>>>> d8b0846e7f5372cb64c4e4719a09391c1bd9c3e7
                     }
-                }
             }
 
             if ((Bullets.Count == 0 && WhoseTurn.Equals(connection.peerID)) && myPlayer.isFire())
@@ -149,7 +162,10 @@ namespace GunBond
 
             foreach (Player player in Players.Values)
             {
-                player.draw(spriteBatch);
+                if (player.getHealthPoint() > 0)
+                {
+                    player.draw(spriteBatch);
+                }
             }
 
             spriteBatch.End();

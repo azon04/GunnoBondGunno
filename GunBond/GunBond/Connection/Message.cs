@@ -77,6 +77,7 @@ namespace GunBond.Connection
                     String msgData = Encoding.ASCII.GetString(SubBytes(iMsg, 12, iMsg.Length - 12));
                     String[] info = msgData.Split('|');
                     String[] VectorPos = info[0].Split(',');
+                    Console.WriteLine("ini errornya : " + msgData + ", sus dulu...");
                     bulletV0 = new Vector2(float.Parse(VectorPos[0]), float.Parse(VectorPos[1]));
                     VectorPos = info[1].Split(',');
                     playerPos.X = float.Parse(VectorPos[0]);
@@ -92,7 +93,8 @@ namespace GunBond.Connection
                     System.Diagnostics.Debug.WriteLine(msgData);
                     Console.WriteLine("Sesuatu -" + msgData);
                     String[] VectorPos0 = msgData.Split(',');
-                    Console.WriteLine(msgData);
+                    Console.WriteLine("_" + msgData);
+                    Console.WriteLine("_" + VectorPos0);
                     playerPos0.X = float.Parse(VectorPos0[0]);
                     playerPos0.Y = float.Parse(VectorPos0[1]);
                 }
