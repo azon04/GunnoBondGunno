@@ -186,6 +186,7 @@ namespace GunBond.Connection
                     // Create Client Handler
                     lock (ClientHandlers)
                     {
+                        Console.WriteLine("GameConnection Listened :" + IP);
                         ClientHandlers.Add(new ClientHandler(this, handler));
                     }
                     
