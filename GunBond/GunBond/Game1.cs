@@ -72,6 +72,7 @@ namespace GunBond
             msg.msgCode = Message.INIT;
             msg.playerPos0 = vec;
             msg.PeerID = connection.peerID;
+            msg.playerTexture = myPlayer.getPlayerTextureNumber();
             connection.BroadCastMessage(msg.Construct());
             myPlayer.setIsCurrentPlayer(true);
 
@@ -113,10 +114,18 @@ namespace GunBond
                         int HP = player.getHealthPoint();
                         HP = HP - 20;
                         player.setHealthPoint(HP);
+                        RemoveBullets.Add(bullet);
                     }
                 }
             }
 
+            if ((Bullets.Count == 0 && WhoseTurn.Equals(connection.peerID)) && myPlayer.isFire())
+            {
+                Message msg = new Message();
+                msg.msgCode = Message.NEXT_PLAYER;
+                msg.nextPlayer = connection.PeerIDs[(connection.PeerIDs.IndexOf(connection.peerID) + 1) % connection.PeerIDs.Count];
+                connection.BroadCastMessage(msg.Construct());
+            }
             base.Update(gameTime);
         }
 

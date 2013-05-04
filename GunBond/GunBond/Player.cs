@@ -196,6 +196,25 @@ namespace GunBond
         {
             return playerTexture;
         }
+        public int getPlayerTextureNumber()
+        {
+            if (playerTexture.Equals(AssetsManager.AssetsList["orang1"]))
+            {
+                return 0;
+            }
+            else if (playerTexture.Equals(AssetsManager.AssetsList["orang2"]))
+            {
+                return 1;
+            }
+            else if (playerTexture.Equals(AssetsManager.AssetsList["orang3"]))
+            {
+                return 2;
+            }
+            else
+            {
+                return 3;
+            }
+        }
 
         public team getMyTeam() 
         {
