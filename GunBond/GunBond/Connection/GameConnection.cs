@@ -445,6 +445,7 @@ namespace GunBond.Connection
                         if (m.msgCode == Message.FIRE)
                         {
                             //nembak
+                            Console.WriteLine("TEMBAK");
                             lock (Game1.GameObject.Bullets)
                             {
                                 Game1.GameObject.Bullets.Add(new Bullet(Game1.GameObject, m.playerPos, m.bulletV0, m.playerRot, new Microsoft.Xna.Framework.Vector2(0, 10)));
