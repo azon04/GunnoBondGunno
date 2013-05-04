@@ -88,6 +88,7 @@ namespace GunBond.Connection
                     playerTexture = iMsg[12];
                     String msgData = Encoding.ASCII.GetString(SubBytes(iMsg, 13, iMsg.Length - 13));
                     System.Diagnostics.Debug.WriteLine(msgData);
+                    Console.WriteLine("Sesuatu -" + msgData);
                     String[] VectorPos0 = msgData.Split(',');
                     playerPos0.X = float.Parse(VectorPos0[0]);
                     playerPos0.Y = float.Parse(VectorPos0[1]);
@@ -183,7 +184,7 @@ namespace GunBond.Connection
             }
             else if (msgCode == 4)
             {
-                tempList.AddRange(BitConverter.GetBytes(playerTexture));
+                tempList.Add((byte)playerTexture);
                 tempList.AddRange(Encoding.ASCII.GetBytes("" + playerPos0.X + "," + playerPos0.Y));
             }
 
