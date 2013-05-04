@@ -128,7 +128,7 @@ namespace UNOS_Sister
             connected = false;
             sender.Shutdown(SocketShutdown.Both);
             sender.Close();
-            peerUI.Close();
+            //peerUI.Close();
             Console.WriteLine("Disconnect from server");            
         }
 

@@ -110,7 +110,8 @@ namespace GunBond.Connection
             }   
         }
 
-        public string ToString()
+       
+        public string GetString()
         {
             return msgCode.ToString();
         }

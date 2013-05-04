@@ -140,7 +140,7 @@ namespace GunBond.Connection
                 {
                     Console.WriteLine("Waiting for game client..");
                     Socket handler = Socket.Accept();
-
+                    Console.WriteLine("Get Handler..");
                     byte[] bytes = new byte[1024];
                     int bytesRec = handler.Receive(bytes);
 
@@ -256,7 +256,8 @@ namespace GunBond.Connection
             }
             catch (SocketException se)
             {
-                if (se.ErrorCode == (int)SocketError.ConnectionRefused)
+                System.Diagnostics.Debug.WriteLine(IP + "," + se.ToString());
+                if (se.ErrorCode == (int)SocketError.ConnectionRefused || se.ErrorCode == (int)SocketError.TimedOut)
                 {
                     return Connect(IP);
                 }
@@ -440,7 +441,7 @@ namespace GunBond.Connection
                         // Message Handling Here
                         Message m = new Message();
                         m.Parse(bytes);
-                        Game1.GameObject.text = "From IP : " + m;
+                        Game1.GameObject.text = "From PeerID : " + PeerID + " : " + m.GetString();
                         if (m.msgCode == Message.FIRE)
                         {
                             //nembak
