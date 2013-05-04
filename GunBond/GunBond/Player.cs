@@ -62,6 +62,10 @@ namespace GunBond
             
             Array jenis = Enum.GetValues(typeof(jenisPlayer));
             currentPlayer = (jenisPlayer)jenis.GetValue(random.Next(jenis.Length));
+            if (currentPlayer == jenisPlayer.player1) { playerTexture = AssetsManager.AssetsList["orang1"]; }
+            if (currentPlayer == jenisPlayer.player2) { playerTexture = AssetsManager.AssetsList["orang2"]; }
+            if (currentPlayer == jenisPlayer.player3) { playerTexture = AssetsManager.AssetsList["orang3"]; }
+            if (currentPlayer == jenisPlayer.player4) { playerTexture = AssetsManager.AssetsList["orang4"]; }
 
             // randomize team
             Array tim = Enum.GetValues(typeof(team));
@@ -120,6 +124,10 @@ namespace GunBond
             // randomize jenis player (dari segi texture)
             Array jenis = Enum.GetValues(typeof(jenisPlayer));
             currentPlayer = (jenisPlayer)jenis.GetValue(random.Next(jenis.Length));
+            if (currentPlayer == jenisPlayer.player1) { playerTexture = AssetsManager.AssetsList["orang1"]; }
+            if (currentPlayer == jenisPlayer.player2) { playerTexture = AssetsManager.AssetsList["orang2"]; }
+            if (currentPlayer == jenisPlayer.player3) { playerTexture = AssetsManager.AssetsList["orang3"]; }
+            if (currentPlayer == jenisPlayer.player4) { playerTexture = AssetsManager.AssetsList["orang4"]; }
 
             // randomize team
             Array tim = Enum.GetValues(typeof(team));
@@ -196,17 +204,18 @@ namespace GunBond
         {
             return playerTexture;
         }
+
         public int getPlayerTextureNumber()
         {
-            if (playerTexture.Equals(AssetsManager.AssetsList["orang1"]))
+            if (currentPlayer == jenisPlayer.player1)
             {
                 return 0;
             }
-            else if (playerTexture.Equals(AssetsManager.AssetsList["orang2"]))
+            else if (currentPlayer == jenisPlayer.player2)
             {
                 return 1;
             }
-            else if (playerTexture.Equals(AssetsManager.AssetsList["orang3"]))
+            else if (currentPlayer == jenisPlayer.player3)
             {
                 return 2;
             }
@@ -364,11 +373,7 @@ namespace GunBond
             if (keys.IsKeyDown(Keys.E) && isCurrentPlayer == true && angle > 0.0f) { angle = angle - 0.05f; }
 
             // ubah Texture player berdasarkan hasil randomize
-            if (currentPlayer == jenisPlayer.player1) { playerTexture = AssetsManager.AssetsList["orang1"]; }
-            if (currentPlayer == jenisPlayer.player2) { playerTexture = AssetsManager.AssetsList["orang2"]; }
-            if (currentPlayer == jenisPlayer.player3) { playerTexture = AssetsManager.AssetsList["orang3"]; }
-            if (currentPlayer == jenisPlayer.player4) { playerTexture = AssetsManager.AssetsList["orang4"]; }
-
+            
             if (isCurrentPlayer && !Fire)
             {
                 Message msg = new Message();

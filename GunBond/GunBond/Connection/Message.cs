@@ -135,6 +135,7 @@ namespace GunBond.Connection
             {
                 return ("Kode : " + msgCode.ToString() + ", PeerID : " + PeerID + ", isi message : INIT");
             }
+            return "Kode : " + msgCode.ToString();
         }
 
         public override bool Equals(object obj)
