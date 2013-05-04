@@ -90,6 +90,7 @@ namespace GunBond.Connection
                     System.Diagnostics.Debug.WriteLine(msgData);
                     Console.WriteLine("Sesuatu -" + msgData);
                     String[] VectorPos0 = msgData.Split(',');
+                    Console.WriteLine(msgData);
                     playerPos0.X = float.Parse(VectorPos0[0]);
                     playerPos0.Y = float.Parse(VectorPos0[1]);
 
