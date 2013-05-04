@@ -26,7 +26,10 @@ namespace GunBond
         public Dictionary<string, Player> Players;
         public List<Bullet> RemoveBullets;
 
-        GameConnection connection;
+        public GameConnection connection;
+
+        public string WhoseTurn = "";
+        public Player myPlayer;
 
         // constructor
         public Game1(GameConnection con)
@@ -62,13 +65,12 @@ namespace GunBond
             System.Diagnostics.Debug.WriteLine("Sent Init");
             Random rand = new Random();
             Vector2 vec = new Vector2(rand.Next(800), 300);
-            Players.Add(connection.peerID,new Player("AAA",vec));
+            Players.Add(connection.peerID,(myPlayer = new Player(connection.peerID,vec)));
             Message msg = new Message();
             msg.msgCode = Message.INIT;
             msg.playerPos0 = vec;
             connection.BroadCastMessage(msg.Construct());
 
-            Bullets.Add(new Bullet(this, Vector2.Zero, new Vector2(-600, 300), 0f, new Vector2(0, 10)));
         }
 
         protected override void UnloadContent()

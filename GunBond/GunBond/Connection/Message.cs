@@ -103,6 +103,16 @@ namespace GunBond.Connection
             return null;
         }
 
+        public override bool Equals(object obj)
+        {
+            if (obj is Message)
+            {
+                Message msg = obj as Message;
+                return Encoding.ASCII.GetString(this.Construct()).Equals(Encoding.ASCII.GetString(msg.Construct()));
+            }
+            return base.Equals(obj);
+        }
+
         public bool validMsg(byte[] iMsg) {
             byte[] defaultBytes = Encoding.ASCII.GetBytes(tag);
             if (iMsg.Length < defaultBytes.Length) return false;

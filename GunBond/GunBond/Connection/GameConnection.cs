@@ -24,6 +24,8 @@ namespace GunBond.Connection
 
         bool shutdown = false;
 
+        public List<Message> MessageBox;
+
         delegate void del(); // declare a delegate
 
         public GameConnection(string peerID)
@@ -47,6 +49,7 @@ namespace GunBond.Connection
 
             //ListenThread.Start();
             configurator = new Configurator(IP);
+            MessageBox = new List<Message>();
         }
 
         public void StartConfig(List<string> IPTable)
@@ -283,6 +286,10 @@ namespace GunBond.Connection
             }
         }
 
+        public bool ifMessageRepeated(Message msg) {
+            return msg.PeerID.Equals(this.peerID) || MessageBox.Contains(msg);
+        }
+
         #region ClientHandler
         public class ClientHandler
         {
@@ -416,10 +423,13 @@ namespace GunBond.Connection
                         }
                         else if (m.msgCode == Message.NEXT_PLAYER)
                         {
+                            Game1.GameObject.WhoseTurn = m.nextPlayer;
+
                             //next player
                             if (Connection.peerID.Equals(m.nextPlayer))
                             {
                                 // Set Fire true
+                                Game1.GameObject.myPlayer.setFire(false);
                             }
                         } 
                         else if (m.msgCode == Message.POS)
@@ -430,7 +440,7 @@ namespace GunBond.Connection
                             {
                                 player.setPosition(m.playerPos);
                                 player.setAngle(m.playerRot);
-                                //player.setOrientation(m.playerOrt);
+                                player.setOrientation(m.playerOrt);
                             }
                         }
                         else if (m.msgCode == Message.INIT)
@@ -440,19 +450,19 @@ namespace GunBond.Connection
                             switch (m.playerTexture)
                             {
                                 case 0 :
-                                    
+                                    player.setPlayerTexture(AssetsManager.AssetsList["orang1"]);
                                     break;
                                 case 1:
-
+                                    player.setPlayerTexture(AssetsManager.AssetsList["orang2"]);
                                     break;
                                 case 2:
-
+                                    player.setPlayerTexture(AssetsManager.AssetsList["orang3"]);
                                     break;
                                 case 3:
-
+                                    player.setPlayerTexture(AssetsManager.AssetsList["orang4"]);
                                     break;
                                 default:
-
+                                    player.setPlayerTexture(AssetsManager.AssetsList["orang1"]);
                                     break;
                             }
 
@@ -461,6 +471,13 @@ namespace GunBond.Connection
 
                         //Response
                         //SendMsg(response);
+                        if (!Connection.ifMessageRepeated(m))
+                        {
+                            if(Connection.MessageBox.Count >= 5)
+                                Connection.MessageBox.Remove(Connection.MessageBox[0]);
+                            Connection.MessageBox.Add(m);
+                            Connection.BroadCastMessage(m.Construct());
+                        }
                     }
                     catch (SocketException se)
                     {

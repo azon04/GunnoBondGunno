@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using GunBond.Connection;
 
 namespace GunBond
 {
@@ -272,20 +273,32 @@ namespace GunBond
             
             // firing state true
             if (keys.IsKeyDown(Keys.Space) && isCurrentPlayer == true && !Fire) { 
-                //Fire = true;
+                Fire = true;
                 int tempSpeed = 50;
+                Message msg = new Message();
+                msg.msgCode = Message.FIRE;
+                msg.PeerID = Game1.GameObject.connection.peerID;
+
                 if ((angle <= 0.7f) || (angle >= 3.14f - 0.7f))
                 {
                     Game1.GameObject.Bullets.Add(new Bullet(Game1.GameObject, position + new Vector2(playerTexture.Width / 2, playerTexture.Height / 2), new Vector2(1.5f * tempSpeed, 1.5f * -tempSpeed), angle, new Vector2(0, 10)));
+                    msg.bulletV0 = new Vector2(1.5f * tempSpeed, 1.5f * -tempSpeed);
+                    msg.playerPos = position + new Vector2(playerTexture.Width / 2, playerTexture.Height / 2);
                 }
                 else if ((angle > 0.7f && angle <= 1.4f) || (angle < 3.14f - 0.7f && angle >= 3.14f - 1.4f))
                 {
                     Game1.GameObject.Bullets.Add(new Bullet(Game1.GameObject, position + new Vector2(playerTexture.Width / 2, playerTexture.Height / 2), new Vector2(tempSpeed, -tempSpeed), angle, new Vector2(0, 10)));
+                    msg.bulletV0 = new Vector2( tempSpeed,  -tempSpeed);
+                    msg.playerPos = position + new Vector2(playerTexture.Width / 2, playerTexture.Height / 2);
                 }
                 else if (angle > 1.4f || angle < 3.14f - 1.4f)
                 {
                     Game1.GameObject.Bullets.Add(new Bullet(Game1.GameObject, position + new Vector2(playerTexture.Width / 2, playerTexture.Height / 2), new Vector2(tempSpeed / 2, -tempSpeed / 2), angle, new Vector2(0, 10)));
+                    msg.bulletV0 = new Vector2(0.5f * tempSpeed, 0.5f * -tempSpeed);
+                    msg.playerPos = position + new Vector2(playerTexture.Width / 2, playerTexture.Height / 2);
                 }
+                msg.playerRot = angle;
+                Game1.GameObject.connection.BroadCastMessage(msg.Construct());
             }
             
             // geser player
