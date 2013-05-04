@@ -116,19 +116,13 @@ namespace GunBond
             {
                 foreach (Bullet bullet in Bullets)
                     {
-<<<<<<< HEAD
-                        int HP = player.getHealthPoint();
-                        HP = HP - 20;
-                        player.setHealthPoint(HP);
-                        RemoveBullets.Add(bullet);
-=======
                         if (bullet.isColide(player))
                         {
                             int HP = player.getHealthPoint();
-                            HP = HP - 20;
-                            player.setHealthPoint(HP);
+                        HP = HP - 20;
+                        player.setHealthPoint(HP);
+                        RemoveBullets.Add(bullet);
                         }
->>>>>>> d8b0846e7f5372cb64c4e4719a09391c1bd9c3e7
                     }
             }
 
