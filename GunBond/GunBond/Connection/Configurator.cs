@@ -10,7 +10,7 @@ namespace GunBond.Connection
         public enum State { start, starting, done };
 
         public State Status = State.start; 
-        List<string> IPTable;
+        public List<string> IPTable;
         string IP;
         string tag = "GundBond";
 

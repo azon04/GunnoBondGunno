@@ -130,10 +130,19 @@ namespace GunBond.Connection
                     int bytesRec = handler.Receive(bytes);
 
                     configurator.Parse(bytes);
-                    StartConfig();
-
+                    if (configurator.IPTable.Count > 2)
+                    {
+                        StartConfig();
+                    }
                     ClientHandler handlerClient = new ClientHandler(this, handler);
-                    handlerClient.WaitConfigComplete();
+                    if (configurator.IPTable.Count > 2)
+                    {
+                        handlerClient.WaitConfigComplete();
+                    }
+                    else
+                    {
+                        configurator.Status = Configurator.State.done;
+                    }
                     
                     // Create Client Handler
                     lock (ClientHandlers)
