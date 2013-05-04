@@ -14,6 +14,8 @@ namespace GunBond.Connection
     public class GameConnection
     {
         public List<string> IPTable;
+        public List<string> PeerIDs;
+
         public string IP;
         public Socket Socket;
         List<ClientHandler> ClientHandlers;
@@ -50,6 +52,7 @@ namespace GunBond.Connection
             //ListenThread.Start();
             configurator = new Configurator(IP);
             MessageBox = new List<Message>();
+            PeerIDs = new List<string>();
         }
 
         public void StartConfig(List<string> IPTable)
@@ -65,6 +68,10 @@ namespace GunBond.Connection
                 ClientHandler ch = Connect(ip);
                 System.Diagnostics.Debug.WriteLine(ip + "," + ip.Count());
                 ch.SendMsg(configurator.ConstructMessageConfig());
+                Message msg = new Message();
+                msg.msgCode = Message.PEERTABLE;
+                msg.list = PeerIDs;
+                ch.SendMsg(msg.Construct());
             }
         }
 
@@ -75,6 +82,10 @@ namespace GunBond.Connection
             {
                 ClientHandler ch = Connect(ip);
                 ch.SendMsg(configurator.ConstructMessageConfig());
+                Message msg = new Message();
+                msg.msgCode = Message.PEERTABLE;
+                msg.list = PeerIDs;
+                ch.SendMsg(msg.Construct());
             }
         }
 
@@ -132,6 +143,14 @@ namespace GunBond.Connection
 
                     byte[] bytes = new byte[1024];
                     int bytesRec = handler.Receive(bytes);
+
+                    byte[] bytesPeer = new byte[1024];
+                    handler.Receive(bytesPeer);
+
+                    Message msg = new Message();
+                    msg.Parse(bytesPeer);
+
+                    PeerIDs = msg.list;
 
                     configurator.Parse(bytes);
                     if (configurator.IPTable.Count > 2)
@@ -415,11 +434,13 @@ namespace GunBond.Connection
                         Console.WriteLine(bytes[bytes.Length - 1]);
                         Console.WriteLine("Message : {0}", Encoding.ASCII.GetString(bytes, 0, bytesRec));
 
+                        
                         string response = "OK";
 
                         // Message Handling Here
                         Message m = new Message();
                         m.Parse(bytes);
+                        Game1.GameObject.text = "From IP : " + m;
                         if (m.msgCode == Message.FIRE)
                         {
                             //nembak

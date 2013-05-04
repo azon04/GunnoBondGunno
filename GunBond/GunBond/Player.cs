@@ -44,7 +44,7 @@ namespace GunBond
         Texture2D pointerTexture;
 
         // Current player dipake buat nentuin update posisi player atau angle player
-        bool isCurrentPlayer = true;
+        bool isCurrentPlayer = false;
 
         // constructor
         public Player()
@@ -54,7 +54,7 @@ namespace GunBond
             position = new Vector2();
             angle = 3.14f;
             healthPoint = 100;
-            Fire = false;
+            Fire = true;
             orientation = 0;
 
             // randomize jenis player (dari segi texture)

@@ -26,6 +26,7 @@ namespace GunBond
                     {
                         peer.peer.DisconnectFromServer();
                         gameConnection = new GameConnection(peer.peer.PeerID);
+                        gameConnection.PeerIDs = peer.peer.peerList;
                         System.Diagnostics.Debug.WriteLine("Crator Peer : " + peer.peer.IPTable[peer.peer.PeerID]);
                         List<string> ipAddress = new List<string>();
                         foreach (string ip in peer.peer.IPTable.Values)

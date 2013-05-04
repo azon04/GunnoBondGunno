@@ -11,8 +11,8 @@ namespace GunBond.Connection
         public string PeerID; //4 byte peer ID
         public byte msgCode; //1 byte tipe message
         string tag = "GunBond";
-        
 
+        public List<string> list;
 
         //buat posisi player
         public Vector2 playerPos; //posisi player
@@ -43,11 +43,13 @@ namespace GunBond.Connection
         public static byte FIRE = 2;
         public static byte NEXT_PLAYER = 3;
         public static byte INIT = 4;
-        
+        public static byte PEERTABLE = 7;
+
         public Message() //ctor
         {
             msgCode = 1;
             PeerID = "9999";
+            list = new List<string>();
         }
 
         public void Parse(byte[] iMsg) {
@@ -93,8 +95,15 @@ namespace GunBond.Connection
                     Console.WriteLine(msgData);
                     playerPos0.X = float.Parse(VectorPos0[0]);
                     playerPos0.Y = float.Parse(VectorPos0[1]);
-
-                } else {
+                }
+                else if (msgCode == 7)
+                {
+                    String msgData = Encoding.ASCII.GetString(SubBytes(iMsg, 12, iMsg.Length - 12));
+                    string[] ips = msgData.Split(',');
+                    list = new List<string>(ips);
+                }
+                else
+                {
                     Console.WriteLine("Message Tidak Valid");
                 }
 
@@ -103,7 +112,7 @@ namespace GunBond.Connection
 
         public string ToString()
         {
-            return null;
+            return msgCode.ToString();
         }
 
         public override bool Equals(object obj)
@@ -187,6 +196,16 @@ namespace GunBond.Connection
             {
                 tempList.Add((byte)playerTexture);
                 tempList.AddRange(Encoding.ASCII.GetBytes("" + playerPos0.X + "," + playerPos0.Y));
+            }
+            else if (msgCode == 7)
+            {
+                String s = "";
+                foreach (string sid in list)
+                {
+                    s += sid + ",";
+                }
+                s = s.Substring(0, s.Length - 1);
+                tempList.AddRange(Encoding.ASCII.GetBytes(s));
             }
 
             return tempList.ToArray();

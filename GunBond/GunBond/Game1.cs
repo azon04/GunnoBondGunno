@@ -28,6 +28,8 @@ namespace GunBond
 
         public GameConnection connection;
 
+        public string text = "";
+
         public string WhoseTurn = "";
         public Player myPlayer;
 
@@ -71,7 +73,11 @@ namespace GunBond
             msg.playerPos0 = vec;
             msg.PeerID = connection.peerID;
             connection.BroadCastMessage(msg.Construct());
+            myPlayer.setIsCurrentPlayer(true);
 
+            msg.msgCode = Message.NEXT_PLAYER;
+            msg.nextPlayer = connection.PeerIDs[(connection.PeerIDs.IndexOf(connection.peerID) + 1) % connection.PeerIDs.Count];
+            connection.BroadCastMessage(msg.Construct());
         }
 
         protected override void UnloadContent()
@@ -121,7 +127,7 @@ namespace GunBond
             // TODO: Add your drawing code here
             spriteBatch.Begin();
             spriteBatch.Draw(AssetsManager.AssetsList["background"], Vector2.Zero, Color.White);
-            spriteBatch.DrawString(AssetsManager.FontList["default"], "Gunno Bond Unyo", Vector2.Zero, Color.White);
+            spriteBatch.DrawString(AssetsManager.FontList["default"], text, Vector2.Zero, Color.Black);
             foreach (Bullet bullet in Bullets)
             {
                 bullet.Draw(spriteBatch);

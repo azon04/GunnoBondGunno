@@ -23,7 +23,7 @@ namespace UNOS_Sister
 
         List<Room> roomList;
         Room myRoom;
-        List<String> peerList;
+        public List<String> peerList;
 
         Thread keepAliveThread;
         Thread senderThread;
