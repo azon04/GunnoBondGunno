@@ -33,6 +33,7 @@ namespace GunBond
         public string WhoseTurn = "";
         public Player myPlayer;
 
+        public bool IsCreator = false;
         // constructor
         public Game1(GameConnection con)
         {
@@ -76,9 +77,11 @@ namespace GunBond
             connection.BroadCastMessage(msg.Construct());
             myPlayer.setIsCurrentPlayer(true);
 
-            msg.msgCode = Message.NEXT_PLAYER;
-            msg.nextPlayer = connection.PeerIDs[(connection.PeerIDs.IndexOf(connection.peerID) + 1) % connection.PeerIDs.Count];
-            connection.BroadCastMessage(msg.Construct());
+            if (IsCreator)
+            {
+                WhoseTurn = connection.peerID;
+                myPlayer.setFire(false);
+            }
         }
 
         protected override void UnloadContent()
@@ -97,6 +100,7 @@ namespace GunBond
 
             Message msgAlive = new Message();
             msgAlive.msgCode = Message.KEEP_ALIVE;
+            msgAlive.PeerID = connection.peerID;
             msgAlive.HP = myPlayer.getHealthPoint();
             connection.BroadCastMessage(msgAlive.Construct());
 
@@ -130,6 +134,7 @@ namespace GunBond
             {
                 Message msg = new Message();
                 msg.msgCode = Message.NEXT_PLAYER;
+                msg.PeerID = connection.peerID;
                 msg.nextPlayer = connection.PeerIDs[(connection.PeerIDs.IndexOf(connection.peerID) + 1) % connection.PeerIDs.Count];
                 connection.BroadCastMessage(msg.Construct());
             }

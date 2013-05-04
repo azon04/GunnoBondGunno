@@ -369,6 +369,16 @@ namespace GunBond
             if (currentPlayer == jenisPlayer.player3) { playerTexture = AssetsManager.AssetsList["orang3"]; }
             if (currentPlayer == jenisPlayer.player4) { playerTexture = AssetsManager.AssetsList["orang4"]; }
 
+            if (isCurrentPlayer && !Fire)
+            {
+                Message msg = new Message();
+                msg.msgCode = Message.POS;
+                msg.PeerID = Game1.GameObject.connection.peerID;
+                msg.playerPos = position;
+                msg.playerRot = angle;
+                msg.playerOrt = orientation;
+                Game1.GameObject.connection.BroadCastMessage(msg.Construct());
+            }
         }
 
         public void draw(SpriteBatch spriteBatch)

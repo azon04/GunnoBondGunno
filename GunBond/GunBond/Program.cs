@@ -44,6 +44,7 @@ namespace GunBond
                     }
                     using (Game1 game = new Game1(gameConnection))
                     {
+                        game.IsCreator = (peer.peer.playStatus == 2);
                         game.Run();
                     }
                     gameConnection.Close();
