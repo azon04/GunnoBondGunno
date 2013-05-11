@@ -510,17 +510,19 @@ namespace GunBond.Connection
 
                                 Game1.GameObject.Players.Add(m.PeerID, player);
                             }
+
+                            //Response
+                            //SendMsg(response);
+                            if (!Connection.ifMessageRepeated(m))
+                            {
+                                if (Connection.MessageBox.Count >= 5)
+                                    Connection.MessageBox.Remove(Connection.MessageBox[0]);
+                                Connection.MessageBox.Add(m);
+                                Connection.BroadCastMessage(m.Construct());
+                            }
                         }
 
-                        //Response
-                        //SendMsg(response);
-                        if (!Connection.ifMessageRepeated(m))
-                        {
-                            if(Connection.MessageBox.Count >= 5)
-                                Connection.MessageBox.Remove(Connection.MessageBox[0]);
-                            Connection.MessageBox.Add(m);
-                            Connection.BroadCastMessage(m.Construct());
-                        }
+                        
                     }
                     catch (SocketException se)
                     {
