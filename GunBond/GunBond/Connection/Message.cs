@@ -61,7 +61,9 @@ namespace GunBond.Connection
 
                 if (msgCode == 0) {
                     //process POS msg
-                    String msgData = Encoding.ASCII.GetString(SubBytes(iMsg, 12, iMsg.Length-12));
+                    String msgData = Encoding.ASCII.GetString(SubBytes(iMsg, 13, iMsg.Length-13));
+                    msgData = msgData.Trim();
+                    Console.WriteLine("Datanya loh : " + msgData);
                     String[] info = msgData.Split('|');
                     String[] VectorPos = info[0].Split(',');
                     playerPos.X = float.Parse(VectorPos[0]);
@@ -195,7 +197,7 @@ namespace GunBond.Connection
             if (msgCode == 0)
             {
                 tempList.Add(POS);
-                tempList.AddRange(Encoding.ASCII.GetBytes("" + playerPos.X + "," + playerPos.Y + "|"));
+                tempList.AddRange(Encoding.ASCII.GetBytes("" + playerPos.X.ToString("0.00") + "," + playerPos.Y.ToString("0.00") + "|"));
                 tempList.AddRange(Encoding.ASCII.GetBytes(playerRot.ToString("0.000") + "|"));
                 tempList.AddRange(Encoding.ASCII.GetBytes(playerOrt.ToString()));
             }
