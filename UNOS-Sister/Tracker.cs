@@ -343,7 +343,15 @@ namespace UNOS_Sister
                                 {
                                     if (!id.Equals(msg.msgPeerID))
                                     {
-                                        Tracker.ClientHandlers[Tracker.IPPeers[id]].handler.Send(msg.Construct());
+                                        Console.WriteLine("Sent Start to : " + id);
+                                        if (Tracker.IPPeers.ContainsKey(id))
+                                        {
+                                            if (Tracker.ClientHandlers.ContainsKey(Tracker.IPPeers[id]))
+                                            {
+                                                Tracker.ClientHandlers[Tracker.IPPeers[id]].handler.Send(msg.Construct());
+                                                Console.WriteLine("Sent");
+                                            }
+                                        }
                                     }
                                 }
                                 Thread.Sleep(500);

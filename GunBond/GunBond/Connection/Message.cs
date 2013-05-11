@@ -10,7 +10,7 @@ namespace GunBond.Connection
     {
         public string PeerID; //4 byte peer ID
         public byte msgCode; //1 byte tipe message
-        string tag = "GunBond";
+        static string tag = "GunBond";
 
         public List<string> list;
 
@@ -112,6 +112,22 @@ namespace GunBond.Connection
             }   
         }
 
+        public static Message[] ParseStream(byte[] iMsg)
+        {
+            List<Message> temp = new List<Message>();
+            string s = Encoding.ASCII.GetString(iMsg);
+            int i = 0;
+            while (i >= s.Length || i >= 0)
+            {
+                int j = s.IndexOf(tag, i);
+                if (j <= 0) j = s.Length;
+                Message newMessage = new Message();
+                newMessage.Parse(Encoding.ASCII.GetBytes(s.Substring(i, j - i)));
+                temp.Add(newMessage);
+                i = j;
+            }
+            return temp.ToArray();
+        }
        
         public string GetString()
         {

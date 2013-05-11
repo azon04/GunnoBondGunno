@@ -439,8 +439,8 @@ namespace GunBond.Connection
                         string response = "OK";
 
                         // Message Handling Here
-                        Message m = new Message();
-                        m.Parse(bytes);
+                        Message m = Message.ParseStream(bytes)[0];
+
                         Game1.GameObject.text = "From PeerID : " + PeerID + " : " + m.GetString();
                         if (m.msgCode == Message.FIRE)
                         {
