@@ -439,73 +439,77 @@ namespace GunBond.Connection
                         string response = "OK";
 
                         // Message Handling Here
-                        Message m = Message.ParseStream(bytes)[0];
+                        Message[] mArray = Message.ParseStream(bytes);
+                        for (int i = 0; i < mArray.Count(); i++)
+                        {
+                            Message m = Message.ParseStream(bytes)[i];
 
-                        Game1.GameObject.text = "From PeerID : " + PeerID + " : " + m.GetString();
-                        if (m.msgCode == Message.FIRE)
-                        {
-                            //nembak
-                            Console.WriteLine("TEMBAK");
-                            lock (Game1.GameObject.Bullets)
+                            Game1.GameObject.text = "From PeerID : " + PeerID + " : " + m.GetString();
+                            if (m.msgCode == Message.FIRE)
                             {
-                                Game1.GameObject.Bullets.Add(new Bullet(Game1.GameObject, m.playerPos, m.bulletV0, m.playerRot, new Microsoft.Xna.Framework.Vector2(0, 10)));
+                                //nembak
+                                Console.WriteLine("TEMBAK");
+                                lock (Game1.GameObject.Bullets)
+                                {
+                                    Game1.GameObject.Bullets.Add(new Bullet(Game1.GameObject, m.playerPos, m.bulletV0, m.playerRot, new Microsoft.Xna.Framework.Vector2(0, 10)));
+                                }
                             }
-                        }
-                        else if (m.msgCode == Message.KEEP_ALIVE)
-                        {
+                            else if (m.msgCode == Message.KEEP_ALIVE)
+                            {
                                 //keep alive
-                            Player player = Game1.GameObject.Players[m.PeerID];
-                            if (player != null)
-                            {
-                                player.setHealthPoint(m.HP);
+                                Player player = Game1.GameObject.Players[m.PeerID];
+                                if (player != null)
+                                {
+                                    player.setHealthPoint(m.HP);
+                                }
                             }
-                        }
-                        else if (m.msgCode == Message.NEXT_PLAYER)
-                        {
-                            Game1.GameObject.WhoseTurn = m.nextPlayer;
+                            else if (m.msgCode == Message.NEXT_PLAYER)
+                            {
+                                Game1.GameObject.WhoseTurn = m.nextPlayer;
 
-                            //next player
-                            if (Connection.peerID.Equals(m.nextPlayer))
-                            {
-                                // Set Fire true
-                                Game1.GameObject.myPlayer.setFire(false);
+                                //next player
+                                if (Connection.peerID.Equals(m.nextPlayer))
+                                {
+                                    // Set Fire true
+                                    Game1.GameObject.myPlayer.setFire(false);
+                                }
                             }
-                        } 
-                        else if (m.msgCode == Message.POS)
-                        {
-                            //kirim position
-                            Player player = Game1.GameObject.Players[m.PeerID];
-                            if (player != null)
+                            else if (m.msgCode == Message.POS)
                             {
-                                player.setPosition(m.playerPos);
-                                player.setAngle(m.playerRot);
-                                player.setOrientation(m.playerOrt);
+                                //kirim position
+                                Player player = Game1.GameObject.Players[m.PeerID];
+                                if (player != null)
+                                {
+                                    player.setPosition(m.playerPos);
+                                    player.setAngle(m.playerRot);
+                                    player.setOrientation(m.playerOrt);
+                                }
                             }
-                        }
-                        else if (m.msgCode == Message.INIT)
-                        {
-                            //init
-                            Player player = new Player(m.PeerID, m.playerPos0);
-                            switch (m.playerTexture)
+                            else if (m.msgCode == Message.INIT)
                             {
-                                case 0 :
-                                    player.setPlayerTexture(AssetsManager.AssetsList["orang1"]);
-                                    break;
-                                case 1:
-                                    player.setPlayerTexture(AssetsManager.AssetsList["orang2"]);
-                                    break;
-                                case 2:
-                                    player.setPlayerTexture(AssetsManager.AssetsList["orang3"]);
-                                    break;
-                                case 3:
-                                    player.setPlayerTexture(AssetsManager.AssetsList["orang4"]);
-                                    break;
-                                default:
-                                    player.setPlayerTexture(AssetsManager.AssetsList["orang1"]);
-                                    break;
-                            }
+                                //init
+                                Player player = new Player(m.PeerID, m.playerPos0);
+                                switch (m.playerTexture)
+                                {
+                                    case 0:
+                                        player.setPlayerTexture(AssetsManager.AssetsList["orang1"]);
+                                        break;
+                                    case 1:
+                                        player.setPlayerTexture(AssetsManager.AssetsList["orang2"]);
+                                        break;
+                                    case 2:
+                                        player.setPlayerTexture(AssetsManager.AssetsList["orang3"]);
+                                        break;
+                                    case 3:
+                                        player.setPlayerTexture(AssetsManager.AssetsList["orang4"]);
+                                        break;
+                                    default:
+                                        player.setPlayerTexture(AssetsManager.AssetsList["orang1"]);
+                                        break;
+                                }
 
-                            Game1.GameObject.Players.Add(m.PeerID, player);
+                                Game1.GameObject.Players.Add(m.PeerID, player);
+                            }
                         }
 
                         //Response
