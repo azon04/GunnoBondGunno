@@ -117,9 +117,9 @@ namespace GunBond.Connection
             List<Message> temp = new List<Message>();
             string s = Encoding.ASCII.GetString(iMsg);
             int i = 0;
-            while (i >= s.Length || i >= 0)
+            while (i < s.Length || i >= 0)
             {
-                int j = s.IndexOf(tag, i);
+                int j = s.IndexOf(tag, i+1);
                 if (j <= 0) j = s.Length;
                 Message newMessage = new Message();
                 newMessage.Parse(Encoding.ASCII.GetBytes(s.Substring(i, j - i)));
