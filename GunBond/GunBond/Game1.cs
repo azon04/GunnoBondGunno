@@ -77,6 +77,7 @@ namespace GunBond
             connection.SendBroadCastMessage(msg.Construct());
 
             myPlayer.setIsCurrentPlayer(true);
+            System.Diagnostics.Debug.WriteLine("Sent Init");
 
             if (IsCreator)
             {
