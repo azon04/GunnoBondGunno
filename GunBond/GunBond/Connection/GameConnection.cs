@@ -401,10 +401,7 @@ namespace GunBond.Connection
             public void SendMsg(byte[] msg)
             {
                 Console.WriteLine(Encoding.ASCII.GetString(msg));
-                lock (handler)
-                {
-                    handler.Send(msg);
-                }
+                handler.Send(msg);
                 Console.WriteLine("Message Sent");
             }
 
@@ -440,13 +437,11 @@ namespace GunBond.Connection
                     {
                         byte[] bytes = new byte[1024];
                         int bytesRec;
-                        lock (handler)
-                        {
-                            bytesRec = handler.Receive(bytes);
-                        }
+                        bytesRec = handler.Receive(bytes);
                         time = 0;
 
                         // Message
+                        Console.WriteLine(bytesRec);
                         Console.WriteLine("Message Received: {0}", Encoding.ASCII.GetString(bytes, 0, bytesRec));
 
                         
