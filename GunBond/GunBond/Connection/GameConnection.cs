@@ -46,6 +46,7 @@ namespace GunBond.Connection
 
             ClientHandlers = new List<ClientHandler>();
             ListenThread = new Thread(Listening);
+            ListenThread.Name = "Listen Thread";
             IPTable = new List<string>();
             this.peerID = peerID;
 
@@ -126,6 +127,7 @@ namespace GunBond.Connection
         public void WaitConfig()
         {
             Thread WaitConfigThread = new Thread(WaitConfigRun);
+            WaitConfigThread.Name = "Wait Config Thread";
             WaitConfigThread.Start();
             while (configurator.Status != Configurator.State.done)
             {
@@ -350,15 +352,18 @@ namespace GunBond.Connection
             public void Start()
             {
                 MsgThread = new Thread(RecvrMsgCallback);
+                MsgThread.Name = "Receive Thread";
                 MsgThread.Start();
 
                 Thread CounterThread = new Thread(Counter);
+                CounterThread.Name = "Counter Thread";
                 CounterThread.Start();
             }
 
             public void WaitConfigComplete()
             {
                 Thread configThread = new Thread(ConfigComplete);
+                configThread.Name = "Config Thread";
                 configThread.Start();
             }
 
@@ -393,7 +398,11 @@ namespace GunBond.Connection
 
             public void SendMsg(byte[] msg)
             {
-                handler.Send(msg);
+                Console.WriteLine(Encoding.ASCII.GetString(msg));
+                lock (handler)
+                {
+                    handler.Send(msg);
+                }
                 Console.WriteLine("Message Sent");
             }
 
@@ -410,13 +419,13 @@ namespace GunBond.Connection
 
                     if (time >= maxTime)
                     {
-                        Close();
+                        /*Close();
                         running = false;
                         lock (Connection.ClientHandlers)
                         {
                             Connection.ClientHandlers.Remove(this);
                         }
-                        break;
+                        break;*/
                     }
                 }
             }
@@ -428,12 +437,16 @@ namespace GunBond.Connection
                     try
                     {
                         byte[] bytes = new byte[1024];
-                        int bytesRec = handler.Receive(bytes);
+                        int bytesRec;
+                        lock (handler)
+                        {
+                            bytesRec = handler.Receive(bytes);
+                        }
                         time = 0;
 
                         // Message
                         Console.WriteLine(bytes[bytes.Length - 1]);
-                        Console.WriteLine("Message : {0}", Encoding.ASCII.GetString(bytes, 0, bytesRec));
+                        Console.WriteLine("Message Received: {0}", Encoding.ASCII.GetString(bytes, 0, bytesRec));
 
                         
                         string response = "OK";
@@ -457,11 +470,11 @@ namespace GunBond.Connection
                             else if (m.msgCode == Message.KEEP_ALIVE)
                             {
                                 //keep alive
-                                Player player = Game1.GameObject.Players[m.PeerID];
+                                /*Player player = Game1.GameObject.Players[m.PeerID];
                                 if (player != null)
                                 {
                                     player.setHealthPoint(m.HP);
-                                }
+                                }*/
                             }
                             else if (m.msgCode == Message.NEXT_PLAYER)
                             {
@@ -488,7 +501,7 @@ namespace GunBond.Connection
                             else if (m.msgCode == Message.INIT)
                             {
                                 //init
-                                Player player = new Player(m.PeerID, m.playerPos0);
+                                /*Player player = new Player(m.PeerID, m.playerPos0);
                                 switch (m.playerTexture)
                                 {
                                     case 0:
@@ -508,18 +521,18 @@ namespace GunBond.Connection
                                         break;
                                 }
 
-                                Game1.GameObject.Players.Add(m.PeerID, player);
+                                Game1.GameObject.Players.Add(m.PeerID, player);*/
                             }
 
                             //Response
                             //SendMsg(response);
-                            if (!Connection.ifMessageRepeated(m))
+                            /*if (!Connection.ifMessageRepeated(m))
                             {
                                 if (Connection.MessageBox.Count >= 5)
                                     Connection.MessageBox.Remove(Connection.MessageBox[0]);
                                 Connection.MessageBox.Add(m);
                                 Connection.BroadCastMessage(m.Construct());
-                            }
+                            }*/
                         }
 
                         

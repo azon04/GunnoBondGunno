@@ -62,10 +62,6 @@ namespace GunBond
             
             Array jenis = Enum.GetValues(typeof(jenisPlayer));
             currentPlayer = (jenisPlayer)jenis.GetValue(random.Next(jenis.Length));
-            if (currentPlayer == jenisPlayer.player1) { playerTexture = AssetsManager.AssetsList["orang1"]; }
-            if (currentPlayer == jenisPlayer.player2) { playerTexture = AssetsManager.AssetsList["orang2"]; }
-            if (currentPlayer == jenisPlayer.player3) { playerTexture = AssetsManager.AssetsList["orang3"]; }
-            if (currentPlayer == jenisPlayer.player4) { playerTexture = AssetsManager.AssetsList["orang4"]; }
 
             // randomize team
             Array tim = Enum.GetValues(typeof(team));
@@ -124,10 +120,6 @@ namespace GunBond
             // randomize jenis player (dari segi texture)
             Array jenis = Enum.GetValues(typeof(jenisPlayer));
             currentPlayer = (jenisPlayer)jenis.GetValue(random.Next(jenis.Length));
-            if (currentPlayer == jenisPlayer.player1) { playerTexture = AssetsManager.AssetsList["orang1"]; }
-            if (currentPlayer == jenisPlayer.player2) { playerTexture = AssetsManager.AssetsList["orang2"]; }
-            if (currentPlayer == jenisPlayer.player3) { playerTexture = AssetsManager.AssetsList["orang3"]; }
-            if (currentPlayer == jenisPlayer.player4) { playerTexture = AssetsManager.AssetsList["orang4"]; }
 
             // randomize team
             Array tim = Enum.GetValues(typeof(team));
@@ -389,6 +381,11 @@ namespace GunBond
         public void draw(SpriteBatch spriteBatch)
         {
             //spriteBatch.Begin();
+
+            if (currentPlayer == jenisPlayer.player1) { playerTexture = AssetsManager.AssetsList["orang1"]; }
+            if (currentPlayer == jenisPlayer.player2) { playerTexture = AssetsManager.AssetsList["orang2"]; }
+            if (currentPlayer == jenisPlayer.player3) { playerTexture = AssetsManager.AssetsList["orang3"]; }
+            if (currentPlayer == jenisPlayer.player4) { playerTexture = AssetsManager.AssetsList["orang4"]; }
 
             spriteBatch.DrawString(AssetsManager.FontList["default"], peerID, position, Color.White);
             

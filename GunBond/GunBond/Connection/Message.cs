@@ -47,7 +47,7 @@ namespace GunBond.Connection
 
         public Message() //ctor
         {
-            msgCode = 1;
+            msgCode = 100;
             PeerID = "9999";
             list = new List<string>();
         }
@@ -55,6 +55,8 @@ namespace GunBond.Connection
         public void Parse(byte[] iMsg) {
             if (validMsg(iMsg)) {
                 //format msg = <tag><peerid><kodemsg><data>
+                Console.WriteLine(Encoding.ASCII.GetString(iMsg));
+                if (iMsg.Count() < 11) return;
                 PeerID = Encoding.ASCII.GetString(SubBytes(iMsg, 7, 4));
                 msgCode = iMsg[11];
                 Console.WriteLine(msgCode.ToString());
@@ -92,11 +94,10 @@ namespace GunBond.Connection
                     //process INIT msg
                     playerTexture = iMsg[12];
                     String msgData = Encoding.ASCII.GetString(SubBytes(iMsg, 13, iMsg.Length - 13));
-                    System.Diagnostics.Debug.WriteLine(msgData);
-                    Console.WriteLine("Sesuatu -" + msgData);
+                    Console.WriteLine("Isi Message Init - " + msgData);
                     String[] VectorPos0 = msgData.Split(',');
-                    Console.WriteLine("_" + msgData);
-                    Console.WriteLine("_" + VectorPos0);
+                    Console.WriteLine("VectorPos - " + VectorPos0[0]);
+                    Console.WriteLine("VectorPos - " + VectorPos0[1]);
                     playerPos0.X = float.Parse(VectorPos0[0]);
                     playerPos0.Y = float.Parse(VectorPos0[1]);
                 }
