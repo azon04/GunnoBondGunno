@@ -76,6 +76,7 @@ namespace GunBond
             msg.playerTexture = myPlayer.getPlayerTextureNumber();
             connection.BroadCastMessage(msg.Construct());
             myPlayer.setIsCurrentPlayer(true);
+            System.Diagnostics.Debug.WriteLine("Sent Init");
 
             if (IsCreator)
             {
