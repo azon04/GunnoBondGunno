@@ -52,7 +52,10 @@ namespace UNOS_Sister
             myRoom = new Room();
 
             keepAliveThread = new Thread(KeepAlive);
+            keepAliveThread.Name = "Keep Alive Thread";
             senderThread = new Thread(sendMessage);
+            senderThread.Name = "Sender Thread";
+
             //processThread = new Thread(processMessage);
 
             IPTable = new Dictionary<string, string>();

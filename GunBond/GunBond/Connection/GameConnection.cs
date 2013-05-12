@@ -23,6 +23,7 @@ namespace GunBond.Connection
         Room room;
         Configurator configurator;
         Thread ListenThread;
+        Queue<byte[]> MessageToBroadCast;
 
         bool shutdown = false;
 
@@ -54,6 +55,8 @@ namespace GunBond.Connection
             configurator = new Configurator(IP);
             MessageBox = new List<Message>();
             PeerIDs = new List<string>();
+
+            MessageToBroadCast = new Queue<byte[]>();
         }
 
         public void StartConfig(List<string> IPTable)
@@ -87,6 +90,31 @@ namespace GunBond.Connection
                 msg.msgCode = Message.PEERTABLE;
                 msg.list = PeerIDs;
                 ch.SendMsg(msg.Construct());
+            }
+        }
+
+        private void SendMessageBroadCastCallBack()
+        {
+            while (true)
+            {
+                byte[] m = null;
+                lock (MessageToBroadCast)
+                {
+                    if (MessageToBroadCast.Count > 0)
+                    {
+                        m = (byte[])MessageToBroadCast.Dequeue();
+                    }
+                }
+                if(m != null)
+                    BroadCastMessage(m);
+            }
+        }
+
+        public void SendBroadCastMessage(byte[] b)
+        {
+            lock (MessageToBroadCast)
+            {
+                MessageToBroadCast.Enqueue(b);
             }
         }
 
@@ -316,6 +344,10 @@ namespace GunBond.Connection
 
         public void Start()
         {
+            Thread broadcastThread = new Thread(SendMessageBroadCastCallBack);
+            broadcastThread.Name = "Broadcast Thread";
+            broadcastThread.Start();
+
             foreach (ClientHandler handler in ClientHandlers)
             {
                 handler.Start();
@@ -435,6 +467,7 @@ namespace GunBond.Connection
                 {
                     try
                     {
+                        System.Diagnostics.Debug.WriteLine("Hello");
                         byte[] bytes = new byte[1024];
                         int bytesRec;
                         bytesRec = handler.Receive(bytes);
@@ -443,6 +476,7 @@ namespace GunBond.Connection
                         // Message
                         Console.WriteLine(bytesRec);
                         Console.WriteLine("Message Received: {0}", Encoding.ASCII.GetString(bytes, 0, bytesRec));
+                        System.Diagnostics.Debug.WriteLine("Message Received: {0}", Encoding.ASCII.GetString(bytes, 0, bytesRec));
 
                         
                         //string response = "OK";
@@ -453,7 +487,7 @@ namespace GunBond.Connection
                         for (int i = 0; i < mArray.Count(); i++)
                         {
                             Message m = mArray[i];
-                            Console.WriteLine(m.msgCode + "," + m.ToString());
+                            System.Diagnostics.Debug.WriteLine(m.msgCode + "," + m.ToString());
 
                             Game1.GameObject.text = "From PeerID : " + PeerID + " : " + m.GetString();
                             if (m.msgCode == Message.FIRE)
