@@ -557,8 +557,10 @@ namespace GunBond.Connection
                                         player.setPlayerTexture(AssetsManager.AssetsList["orang1"]);
                                         break;
                                 }
-
-                                Game1.GameObject.Players.Add(m.PeerID, player);
+                                lock (Game1.GameObject.Players)
+                                {
+                                    Game1.GameObject.Players.Add(m.PeerID, player);
+                                }
                             }
 
                             //Response

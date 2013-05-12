@@ -378,13 +378,13 @@ namespace GunBond
             
             if (isCurrentPlayer && !Fire)
             {
-                Message msg = new Message();
+                /*Message msg = new Message();
                 msg.msgCode = Message.POS;
                 msg.PeerID = Game1.GameObject.connection.peerID;
                 msg.playerPos = position;
                 msg.playerRot = angle;
                 msg.playerOrt = orientation;
-                Game1.GameObject.connection.SendBroadCastMessage(msg.Construct());
+                Game1.GameObject.connection.SendBroadCastMessage(msg.Construct());*/
             }
         }
 

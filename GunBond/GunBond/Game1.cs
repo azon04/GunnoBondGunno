@@ -68,7 +68,10 @@ namespace GunBond
             System.Diagnostics.Debug.WriteLine("Sent Init");
             Random rand = new Random();
             Vector2 vec = new Vector2(rand.Next(800), 300);
-            Players.Add(connection.peerID,(myPlayer = new Player(connection.peerID,vec)));
+            lock (Players)
+            {
+                Players.Add(connection.peerID, (myPlayer = new Player(connection.peerID, vec)));
+            }
             Message msg = new Message();
             msg.msgCode = Message.INIT;
             msg.playerPos0 = vec;
@@ -100,12 +103,12 @@ namespace GunBond
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
-            Message msgAlive = new Message();
+            /*Message msgAlive = new Message();
             msgAlive.msgCode = Message.KEEP_ALIVE;
             msgAlive.PeerID = connection.peerID;
             msgAlive.HP = myPlayer.getHealthPoint();
             connection.SendBroadCastMessage(msgAlive.Construct());
-
+            */
             // TODO: Add your update logic here
             foreach (Bullet bullet in Bullets)
             {
