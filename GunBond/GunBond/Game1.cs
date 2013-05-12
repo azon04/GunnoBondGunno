@@ -74,7 +74,8 @@ namespace GunBond
             msg.playerPos0 = vec;
             msg.PeerID = connection.peerID;
             msg.playerTexture = myPlayer.getPlayerTextureNumber();
-            connection.BroadCastMessage(msg.Construct());
+            connection.SendBroadCastMessage(msg.Construct());
+
             myPlayer.setIsCurrentPlayer(true);
             System.Diagnostics.Debug.WriteLine("Sent Init");
 
