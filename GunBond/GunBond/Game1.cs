@@ -98,11 +98,11 @@ namespace GunBond
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
-            Message msgAlive = new Message();
+            /*Message msgAlive = new Message();
             msgAlive.msgCode = Message.KEEP_ALIVE;
             msgAlive.PeerID = connection.peerID;
             msgAlive.HP = myPlayer.getHealthPoint();
-            connection.BroadCastMessage(msgAlive.Construct());
+            connection.BroadCastMessage(msgAlive.Construct());*/
 
             // TODO: Add your update logic here
             foreach (Bullet bullet in Bullets)
@@ -130,14 +130,14 @@ namespace GunBond
                     }
             }
 
-            if ((Bullets.Count == 0 && WhoseTurn.Equals(connection.peerID)) && myPlayer.isFire())
+            /*if ((Bullets.Count == 0 && WhoseTurn.Equals(connection.peerID)) && myPlayer.isFire())
             {
                 Message msg = new Message();
                 msg.msgCode = Message.NEXT_PLAYER;
                 msg.PeerID = connection.peerID;
                 msg.nextPlayer = connection.PeerIDs[(connection.PeerIDs.IndexOf(connection.peerID) + 1) % connection.PeerIDs.Count];
                 connection.BroadCastMessage(msg.Construct());
-            }
+            }*/
             base.Update(gameTime);
         }
 

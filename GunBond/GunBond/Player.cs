@@ -102,6 +102,11 @@ namespace GunBond
             {
                 pointerTexture = AssetsManager.AssetsList["bluePointer"];
             }
+
+            if (currentPlayer == jenisPlayer.player1) { playerTexture = AssetsManager.AssetsList["orang1"]; }
+            if (currentPlayer == jenisPlayer.player2) { playerTexture = AssetsManager.AssetsList["orang2"]; }
+            if (currentPlayer == jenisPlayer.player3) { playerTexture = AssetsManager.AssetsList["orang3"]; }
+            if (currentPlayer == jenisPlayer.player4) { playerTexture = AssetsManager.AssetsList["orang4"]; }
             
         }
 
@@ -160,6 +165,11 @@ namespace GunBond
             {
                 pointerTexture = AssetsManager.AssetsList["bluePointer"];
             }
+
+            if (currentPlayer == jenisPlayer.player1) { playerTexture = AssetsManager.AssetsList["orang1"]; }
+            if (currentPlayer == jenisPlayer.player2) { playerTexture = AssetsManager.AssetsList["orang2"]; }
+            if (currentPlayer == jenisPlayer.player3) { playerTexture = AssetsManager.AssetsList["orang3"]; }
+            if (currentPlayer == jenisPlayer.player4) { playerTexture = AssetsManager.AssetsList["orang4"]; }
         }
 
         // getter
@@ -368,13 +378,13 @@ namespace GunBond
             
             if (isCurrentPlayer && !Fire)
             {
-                Message msg = new Message();
+                /*Message msg = new Message();
                 msg.msgCode = Message.POS;
                 msg.PeerID = Game1.GameObject.connection.peerID;
                 msg.playerPos = position;
                 msg.playerRot = angle;
                 msg.playerOrt = orientation;
-                Game1.GameObject.connection.BroadCastMessage(msg.Construct());
+                Game1.GameObject.connection.BroadCastMessage(msg.Construct());*/
             }
         }
 
@@ -382,10 +392,10 @@ namespace GunBond
         {
             //spriteBatch.Begin();
 
-            if (currentPlayer == jenisPlayer.player1) { playerTexture = AssetsManager.AssetsList["orang1"]; }
+            /*if (currentPlayer == jenisPlayer.player1) { playerTexture = AssetsManager.AssetsList["orang1"]; }
             if (currentPlayer == jenisPlayer.player2) { playerTexture = AssetsManager.AssetsList["orang2"]; }
             if (currentPlayer == jenisPlayer.player3) { playerTexture = AssetsManager.AssetsList["orang3"]; }
-            if (currentPlayer == jenisPlayer.player4) { playerTexture = AssetsManager.AssetsList["orang4"]; }
+            if (currentPlayer == jenisPlayer.player4) { playerTexture = AssetsManager.AssetsList["orang4"]; }*/
 
             spriteBatch.DrawString(AssetsManager.FontList["default"], peerID, position, Color.White);
             

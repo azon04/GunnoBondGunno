@@ -309,6 +309,7 @@ namespace GunBond.Connection
         {
             foreach (ClientHandler handler in ClientHandlers)
             {
+                Console.WriteLine("Handler = " + handler);
                 handler.SendMsg(msg);
             }
         }
@@ -390,6 +391,7 @@ namespace GunBond.Connection
 
             public void SendMsg(string msg)
             {
+                Console.WriteLine(msg);
                 byte[] msgBytes = Encoding.ASCII.GetBytes(msg);
                 handler.Send(msgBytes);
                 Console.WriteLine("Message Sent");
@@ -445,27 +447,28 @@ namespace GunBond.Connection
                         time = 0;
 
                         // Message
-                        Console.WriteLine(bytes[bytes.Length - 1]);
                         Console.WriteLine("Message Received: {0}", Encoding.ASCII.GetString(bytes, 0, bytesRec));
 
                         
-                        string response = "OK";
+                        //string response = "OK";
 
                         // Message Handling Here
                         Message[] mArray = Message.ParseStream(bytes);
+                        
                         for (int i = 0; i < mArray.Count(); i++)
                         {
-                            Message m = Message.ParseStream(bytes)[i];
+                            Message m = mArray[i];
+                            Console.WriteLine(m.msgCode + "," + m.ToString());
 
                             Game1.GameObject.text = "From PeerID : " + PeerID + " : " + m.GetString();
                             if (m.msgCode == Message.FIRE)
                             {
                                 //nembak
-                                Console.WriteLine("TEMBAK");
+                                /*Console.WriteLine("TEMBAK");
                                 lock (Game1.GameObject.Bullets)
                                 {
                                     Game1.GameObject.Bullets.Add(new Bullet(Game1.GameObject, m.playerPos, m.bulletV0, m.playerRot, new Microsoft.Xna.Framework.Vector2(0, 10)));
-                                }
+                                }*/
                             }
                             else if (m.msgCode == Message.KEEP_ALIVE)
                             {
@@ -478,30 +481,30 @@ namespace GunBond.Connection
                             }
                             else if (m.msgCode == Message.NEXT_PLAYER)
                             {
-                                Game1.GameObject.WhoseTurn = m.nextPlayer;
+                                /*Game1.GameObject.WhoseTurn = m.nextPlayer;
 
                                 //next player
                                 if (Connection.peerID.Equals(m.nextPlayer))
                                 {
                                     // Set Fire true
                                     Game1.GameObject.myPlayer.setFire(false);
-                                }
+                                }*/
                             }
                             else if (m.msgCode == Message.POS)
                             {
                                 //kirim position
-                                Player player = Game1.GameObject.Players[m.PeerID];
+                                /*Player player = Game1.GameObject.Players[m.PeerID];
                                 if (player != null)
                                 {
                                     player.setPosition(m.playerPos);
                                     player.setAngle(m.playerRot);
                                     player.setOrientation(m.playerOrt);
-                                }
+                                }*/
                             }
                             else if (m.msgCode == Message.INIT)
                             {
                                 //init
-                                /*Player player = new Player(m.PeerID, m.playerPos0);
+                                Player player = new Player(m.PeerID, m.playerPos0);
                                 switch (m.playerTexture)
                                 {
                                     case 0:
@@ -521,7 +524,7 @@ namespace GunBond.Connection
                                         break;
                                 }
 
-                                Game1.GameObject.Players.Add(m.PeerID, player);*/
+                                Game1.GameObject.Players.Add(m.PeerID, player);
                             }
 
                             //Response
@@ -539,7 +542,7 @@ namespace GunBond.Connection
                     }
                     catch (SocketException se)
                     {
-                        running = false;
+                        Console.WriteLine(se.ToString());
                         lock (Connection.ClientHandlers)
                         {
                             Connection.ClientHandlers.Remove(this);
