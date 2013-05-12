@@ -102,11 +102,15 @@ namespace GunBond.Connection
                 {
                     if (MessageToBroadCast.Count > 0)
                     {
-                        m = (byte[])MessageToBroadCast.Dequeue();
+                        m = MessageToBroadCast.Dequeue();
                     }
                 }
-                if(m != null)
+                if (m != null)
+                {
+                    System.Diagnostics.Debug.WriteLine("BroadCastMsg");
+                    Console.WriteLine("BroadCastMessage");
                     BroadCastMessage(m);
+                }
             }
         }
 
@@ -337,7 +341,7 @@ namespace GunBond.Connection
         {
             foreach (ClientHandler handler in ClientHandlers)
             {
-                Console.WriteLine("Handler = " + handler);
+                System.Diagnostics.Debug.WriteLine("Handler = " + handler);
                 handler.SendMsg(msg);
             }
         }
@@ -476,59 +480,60 @@ namespace GunBond.Connection
                         // Message
                         Console.WriteLine(bytesRec);
                         Console.WriteLine("Message Received: {0}", Encoding.ASCII.GetString(bytes, 0, bytesRec));
-                        System.Diagnostics.Debug.WriteLine("Message Received: {0}", Encoding.ASCII.GetString(bytes, 0, bytesRec));
-
+                        System.Diagnostics.Debug.WriteLine("Message Received: " + Encoding.ASCII.GetString(bytes, 0, bytesRec));
+                        //Game1.GameObject.text = "Message Received: " + Encoding.ASCII.GetString(bytes, 0, bytesRec);
                         
                         //string response = "OK";
 
                         // Message Handling Here
-                        Message[] mArray = Message.ParseStream(bytes);
+                        //Message[] mArray = Message.ParseStream(bytes);
                         
-                        for (int i = 0; i < mArray.Count(); i++)
-                        {
-                            Message m = mArray[i];
+                        //for (int i = 0; i < mArray.Count(); i++)
+                        //{
+                            Message m = new Message();//mArray[i];
+                            m.Parse(bytes);
                             System.Diagnostics.Debug.WriteLine(m.msgCode + "," + m.ToString());
 
                             Game1.GameObject.text = "From PeerID : " + PeerID + " : " + m.GetString();
                             if (m.msgCode == Message.FIRE)
                             {
                                 //nembak
-                                /*Console.WriteLine("TEMBAK");
+                                Console.WriteLine("TEMBAK");
                                 lock (Game1.GameObject.Bullets)
                                 {
                                     Game1.GameObject.Bullets.Add(new Bullet(Game1.GameObject, m.playerPos, m.bulletV0, m.playerRot, new Microsoft.Xna.Framework.Vector2(0, 10)));
-                                }*/
+                                }
                             }
                             else if (m.msgCode == Message.KEEP_ALIVE)
                             {
                                 //keep alive
-                                /*Player player = Game1.GameObject.Players[m.PeerID];
+                                Player player = Game1.GameObject.Players[m.PeerID];
                                 if (player != null)
                                 {
                                     player.setHealthPoint(m.HP);
-                                }*/
+                                }
                             }
                             else if (m.msgCode == Message.NEXT_PLAYER)
                             {
-                                /*Game1.GameObject.WhoseTurn = m.nextPlayer;
+                                Game1.GameObject.WhoseTurn = m.nextPlayer;
 
                                 //next player
                                 if (Connection.peerID.Equals(m.nextPlayer))
                                 {
                                     // Set Fire true
                                     Game1.GameObject.myPlayer.setFire(false);
-                                }*/
+                                }
                             }
                             else if (m.msgCode == Message.POS)
                             {
                                 //kirim position
-                                /*Player player = Game1.GameObject.Players[m.PeerID];
+                                Player player = Game1.GameObject.Players[m.PeerID];
                                 if (player != null)
                                 {
                                     player.setPosition(m.playerPos);
                                     player.setAngle(m.playerRot);
                                     player.setOrientation(m.playerOrt);
-                                }*/
+                                }
                             }
                             else if (m.msgCode == Message.INIT)
                             {
@@ -565,17 +570,17 @@ namespace GunBond.Connection
                                 Connection.MessageBox.Add(m);
                                 Connection.BroadCastMessage(m.Construct());
                             }*/
-                        }
+                        //}
 
                         
                     }
                     catch (SocketException se)
                     {
-                        Console.WriteLine(se.ToString());
-                        lock (Connection.ClientHandlers)
-                        {
-                            Connection.ClientHandlers.Remove(this);
-                        }
+                        System.Diagnostics.Debug.WriteLine(se.ToString());
+                        //lock (Connection.ClientHandlers)
+                        //{
+                        //    Connection.ClientHandlers.Remove(this);
+                        //}
                     }
                 }
             }

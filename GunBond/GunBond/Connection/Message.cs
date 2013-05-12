@@ -125,7 +125,7 @@ namespace GunBond.Connection
                 int j = s.IndexOf(tag, i+1);
                 if (j <= 0) j = s.Length;
                 Message newMessage = new Message();
-                System.Diagnostics.Debug.WriteLine(s.Substring(i, j - i));
+                System.Diagnostics.Debug.WriteLine("Parse Stream : " + s.Substring(i, j - i));
                 newMessage.Parse(Encoding.ASCII.GetBytes(s.Substring(i, j - i)));
                 temp.Add(newMessage);
                 i = j;
